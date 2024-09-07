@@ -3,6 +3,7 @@ import CourseListPage from './index';
 import CoursesSaveBase from './CoursesSaveBase';
 import TaskListPage from './task';
 import TaskSaveBase from './task/TaskSaveBase';
+import CreateTask from './task/CreateTask';
 export default {
     CourseListPage: {
         path: '/course',
@@ -36,5 +37,15 @@ export default {
         separateCheck: true,
         permission: [apiConfig.task.update.baseURL, apiConfig.task.delete.baseURL],
     },
+
+    CreateTask: {
+        path: '/course/task/lecture',
+        title: 'Create Task',
+        auth: true,
+        component: CreateTask,
+        separateCheck: true,
+        permission: [apiConfig.task.asignAll.baseURL, apiConfig.lecture.getBySubject.baseURL],
+    },
+
 
 };

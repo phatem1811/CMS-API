@@ -52,11 +52,11 @@ const CourseListPage = () => {
                 }
             };
             funcs.additionalActionColumnButtons = () => {
-                if (!mixinFuncs.hasPermission([apiConfig.task.getList.baseURL])) return {};
+                
                 return {
                     task: ({ id, name, state, status, subject }) => {
                         const subjectId = subject?.id || null; 
-                  
+                     
                         return (
                             <Button
                                 type="link"
@@ -119,7 +119,7 @@ const CourseListPage = () => {
         mixinFuncs.renderStatusColumn({ width: '90px' }),
         mixinFuncs.renderActionColumn(
             {
-                task: true,
+                task: mixinFuncs.hasPermission([apiConfig.task.getList.baseURL]),
                 edit: true,
                 delete: true,
             },
