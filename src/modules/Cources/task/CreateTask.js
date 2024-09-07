@@ -74,7 +74,7 @@ const CreateTask = () => {
         open();
     };
     const handleSubmit = async (values) => {
-        values.dateRegister = dayjs().format(DEFAULT_FORMAT);
+        values.startDate = dayjs().format(DEFAULT_FORMAT);
         values.dueDate = formatDateString(values.dueDate, DEFAULT_FORMAT);
         const formData = {
             ...values,
@@ -117,8 +117,8 @@ const CreateTask = () => {
                 return (
                     <div style={{
                         display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
+                        
+
                         width: '100%',
                     }}>
                         <span style={{
@@ -133,11 +133,16 @@ const CreateTask = () => {
                             <CheckCircleOutlined style={{ color: 'green' }} />
                         ) : (
                             showRadio && (
-                                <Radio
-                                    checked={isSelected}
-                                    value={id}
-                                    onChange={handleRadioChange}
-                                />
+                                <div >
+                                    <Radio
+                                        checked={isSelected}
+                                        value={id}
+                                        onChange={handleRadioChange}
+
+                                    />
+
+                                </div>
+
                             )
                         )}
                     </div>
@@ -146,10 +151,13 @@ const CreateTask = () => {
         },
     ];
 
+
+    console.log("check query ", queryString);
+
     return (
         <PageWrapper routes={[
-            { breadcrumbName: <FormattedMessage defaultMessage="Courses" />, path: routes.CourseListPage.path },
-            { breadcrumbName: <FormattedMessage defaultMessage="Task" />, path: routes.TaskListPage.path },
+            { breadcrumbName: <FormattedMessage defaultMessage="Khóa học" />, path: routes.CourseListPage.path },
+            { breadcrumbName: <FormattedMessage defaultMessage="Task" />, path: `/course/task${queryString}` },
             { breadcrumbName: 'Bài giảng' },
         ]}>
             <BaseForm>
@@ -203,6 +211,8 @@ const CreateTask = () => {
                                         },
                                     ]}
                                     showTime={{ format: 'HH:mm:ss' }}
+                                    disabledDate={(current) => current && current < dayjs().startOf('day')}
+
                                 />
                             </Col>
                             <Col span={12}>
@@ -225,7 +235,7 @@ const CreateTask = () => {
                         <div style={{ marginTop: '16px' }}>
 
                             <TextField
-                                required
+                               
                                 label={<FormattedMessage defaultMessage="Chú ý" />}
                                 name="note"
                                 type="textarea"

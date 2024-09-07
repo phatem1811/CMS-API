@@ -9,49 +9,48 @@ import ListPage from '@components/common/layout/ListPage';
 import PageWrapper from '@components/common/layout/PageWrapper';
 import { AppConstants, categoryKind, DEFAULT_FORMAT, DEFAULT_TABLE_ITEM_SIZE } from '@constants';
 import { FieldTypes } from '@constants/formConfig';
-import { statusOptions } from '@constants/masterData';
-import useFetch from '@hooks/useFetch';
-import useNotification from '@hooks/useNotification';
+import DatePickerField from '@components/common/form/DatePickerField';
+import { BaseForm } from '@components/common/form/BaseForm';
 import useTranslate from '@hooks/useTranslate';
 import { commonMessage } from '@locales/intl';
 import { convertUtcToLocalTime } from '@utils';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { formatMoney } from '@utils/formatMoney';
 import { useNavigate, useLocation } from "react-router-dom";
-import { BookOutlined } from '@ant-design/icons';
+import { DollarTwoTone } from '@ant-design/icons';
 import { formatDateString } from '@utils/index';
 import { useIntl } from 'react-intl';
+import { useForm } from 'antd/es/form/Form';
+import useDisclosure from '@hooks/useDisclosure';
 import {
-    STATE_COURSE_PREPARED, STATE_COURSE_STARTED, STATE_COURSE_FINISHED,
-    STATE_COURSE_CANCELED, STATE_COURSE_RECRUITED, courseStatusMessage } from '@constants/masterData';
+    STATE_PROJECT_CREATE, STATE_PROJECT_RUNNING, STATE_PROJECT_DONE, statusOptions,
+    STATE_PROJECT_CANCEL, STATE_PROJECT_FAILED, projectStateMessage } from '@constants/masterData';
 const message = defineMessages({
-    objectName: 'Khóa học',
-    fee: 'Học phí',
-    dateEnd: 'Ngày kêt thúc',
-    subject: "Tên Môn học",
+    objectName: 'Dự Án',
+
 });
 
-const CourseListPage = () => {
+const ProjectListPage = () => {
     const translate = useTranslate();
     const statusValues = translate.formatKeys(statusOptions, ['label']);
-
+    const [isOpen, { open, close }] = useDisclosure();
     const { formatMessage } = useIntl();
-    const statusOptionValues = [
-        { value: STATE_COURSE_PREPARED, label: formatMessage(courseStatusMessage.prepare) },
-        { value: STATE_COURSE_STARTED, label: formatMessage(courseStatusMessage.started) },
-        { value: STATE_COURSE_FINISHED, label: formatMessage(courseStatusMessage.finished) },
-        { value: STATE_COURSE_CANCELED, label: formatMessage(courseStatusMessage.recruited) },
-        { value: STATE_COURSE_RECRUITED, label: formatMessage(courseStatusMessage.cancled) },
+    const stateOptionValues = [
+        { value: STATE_PROJECT_CREATE, label: formatMessage(projectStateMessage.create) },
+        { value: STATE_PROJECT_RUNNING, label: formatMessage(projectStateMessage.running) },
+        { value: STATE_PROJECT_DONE, label: formatMessage(projectStateMessage.done) },
+        { value: STATE_PROJECT_CANCEL, label: formatMessage(projectStateMessage.cancel) },
+        { value: STATE_PROJECT_FAILED, label: formatMessage(projectStateMessage.failed) },
 
     ];
+    const [form] = useForm();
+    const handleOpenModal = (project) => {
 
-    const location = useLocation();
+        open();
+    };
 
-    const navigate = useNavigate();
 
-    console.log("checklocation", location.pathname);
     const { data, mixinFuncs, queryFilter, loading, pagination } = useListBase({
-        apiConfig: apiConfig.courses,
+        apiConfig: apiConfig.project,
         options: {
             pageSize: DEFAULT_TABLE_ITEM_SIZE,
             objectName: translate.formatMessage(message.objectName),
@@ -68,22 +67,15 @@ const CourseListPage = () => {
             funcs.additionalActionColumnButtons = () => {
 
                 return {
-                    task: ({ id, name, state, status, subject }) => {
-                        const subjectId = subject?.id || null;
 
+                    salary: () => {
                         return (
                             <Button
                                 type="link"
                                 style={{ padding: 0 }}
-                                onClick={() => {
-                                    navigate(
-                                        `/course/task?courseId=${id}&courseName=${encodeURIComponent(
-                                            name,
-                                        )}&subjectId=${subjectId}&state=${state}&courseStatus=${status}`, { state: { courseName: message.objectName, path: location.pathname } },
-                                    );
-                                }}
+                                onClick={ handleOpenModal }
                             >
-                                < BookOutlined />
+                                < DollarTwoTone />
                             </Button>
                         );
                     },
@@ -95,7 +87,10 @@ const CourseListPage = () => {
 
     });
 
+    const handleFinish = (project) => {
 
+        open();
+    };
 
     const columns = [
         {
@@ -111,24 +106,25 @@ const CourseListPage = () => {
                 />
             ),
         },
-        { title: <FormattedMessage defaultMessage="Tên khóa học" />, dataIndex: 'name' },
+        { title: <FormattedMessage defaultMessage="Tên dự án" />, dataIndex: 'name', width: 400 },
         {
-            title: <FormattedMessage defaultMessage="Tên Môn Học" />, dataIndex: ['subject', 'subjectName'],
-        },
-        {
-            title: <FormattedMessage defaultMessage="Học phí" />,
-            dataIndex: 'fee',
+            title: <FormattedMessage defaultMessage="Ngày bắt đầu" />,
+            width: 180,
+            dataIndex: 'startDate',
             align: 'right',
-            width: '30px',
-            render: (fee) => formatMoney(fee),
+            render: (startDate) => {
+                const createdDateLocal = convertUtcToLocalTime(startDate, DEFAULT_FORMAT, DEFAULT_FORMAT);
+                return <div>{createdDateLocal}</div>;
+            },
         },
+
         {
             title: <FormattedMessage defaultMessage="Ngày Kết Thúc" />,
             width: 180,
-            dataIndex: 'dateEnd',
+            dataIndex: 'endDate',
             align: 'right',
-            render: (dateEnd) => {
-                const createdDateLocal = convertUtcToLocalTime(dateEnd, DEFAULT_FORMAT, DEFAULT_FORMAT);
+            render: (endDate) => {
+                const createdDateLocal = convertUtcToLocalTime(endDate, DEFAULT_FORMAT, DEFAULT_FORMAT);
                 return <div>{createdDateLocal}</div>;
             },
         },
@@ -136,19 +132,19 @@ const CourseListPage = () => {
             title: <FormattedMessage defaultMessage="Tình trạng" />,
             width: 180,
             dataIndex: 'state',
-            render: (status) => {
-               
-                const statusOption = statusOptionValues.find(option => option.value === status);
+            render: (state) => {
+
+                const stateOption = stateOptionValues.find(option => option.value === state);
                 // 
-                return statusOption ? statusOption.label : <FormattedMessage defaultMessage="Không xác định" />;
+                return stateOption ? stateOption.label : <FormattedMessage defaultMessage="Không xác định" />;
             },
         },
-        
+
 
         mixinFuncs.renderStatusColumn({ width: '90px' }),
         mixinFuncs.renderActionColumn(
             {
-                task: mixinFuncs.hasPermission([apiConfig.task.getList.baseURL]),
+                salary: mixinFuncs.hasPermission([apiConfig.task.getList.baseURL]),
                 edit: true,
                 delete: true,
             },
@@ -158,15 +154,21 @@ const CourseListPage = () => {
 
     const searchFields = [
         {
-            key: 'Tên khóa học',
+            key: 'Tên dự án',
             placeholder: translate.formatMessage(commonMessage.Name),
         },
 
         {
-            key: 'status',
-            placeholder: translate.formatMessage(commonMessage.status),
+            key: 'state',
+            placeholder: 'Tình trạng',
             type: FieldTypes.SELECT,
-            options: statusOptionValues,
+            options: stateOptionValues,
+        },
+        {
+            key: 'status',
+            placeholder: 'Trạng thái',
+            type: FieldTypes.SELECT,
+            options: statusValues,
         },
     ];
 
@@ -185,9 +187,33 @@ const CourseListPage = () => {
                     />
                 }
             />
+            <Modal
+                title="Đăng ký tính lương dự án"
+                open={isOpen}
+                onCancel={close} // Close modal using the hook
+                footer={null}
+            >
+                <BaseForm form={form} onFinish={handleFinish}>
+                    <BaseForm.Item
+                        label="Ngày kết thúc"
+                        name="endDate"
+                        rules={[{ required: true, message: 'Vui lòng chọn ngày kết thúc' }]}
+                    >
+                        <DatePickerField
+                            format={DEFAULT_FORMAT}
+                            style={{ width: '100%' }}
+                        />
+                    </BaseForm.Item>
+                    <BaseForm.Item>
+                        <Button type="primary" htmlType="submit">
+                            Lưu
+                        </Button>
+                    </BaseForm.Item>
+                </BaseForm>
+            </Modal>
 
         </PageWrapper>
     );
 };
 
-export default CourseListPage;
+export default ProjectListPage;

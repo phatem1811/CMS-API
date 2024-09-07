@@ -43,6 +43,22 @@ export const STATE_COURSE_FINISHED = 3;
 export const STATE_COURSE_CANCELED = 4;
 export const STATE_COURSE_RECRUITED = 5;
 
+export const STATE_PROJECT_CREATE = 1;
+export const STATE_PROJECT_RUNNING = 2;
+export const STATE_PROJECT_DONE = 3;
+export const STATE_PROJECT_CANCEL = 4;
+export const STATE_PROJECT_FAILED = 5;
+
+export const projectStateMessage = defineMessages({
+    create: 'Đang tạo',
+    running: 'Đang xử lí',
+    done:'hoàn tất',  
+    cancel: 'Đã hủy',
+    failed: 'thất bại',
+});
+
+
+
 export const courseStatusMessage = defineMessages({
     prepare: 'Chưa bắt đầu',
     started: 'Đã bắt đầu',
