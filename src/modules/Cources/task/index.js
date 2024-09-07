@@ -13,7 +13,8 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { DATE_FORMAT_DISPLAY, DATE_FORMAT_VALUE } from '@constants/index';
 import DatePickerField from '@components/common/form/DatePickerField';
 import { useLocation } from 'react-router-dom';
-
+import  routes from '../route';
+import dayjs from 'dayjs';
 
 
 const message = defineMessages({
@@ -25,6 +26,8 @@ const TaskListPage = () => {
     const translate = useTranslate();
     const [showPreviewModal, setShowPreviewModal] = useState(false);
     const location = useLocation();
+    const { pathname: pagePath } = useLocation();
+    const queryString = location.search;
     const courseName = location.state?.courseName;
     console.log("check", location);
     const { data, mixinFuncs, queryFilter, loading, pagination } = useListBase({
@@ -42,6 +45,9 @@ const TaskListPage = () => {
                     };
                 }
             };
+            funcs.getCreateLink = () => {
+                return `${pagePath}/lecture${queryString}`;
+            };
 
         },
 
@@ -57,7 +63,7 @@ const TaskListPage = () => {
             width: 100,
             render: (text, record, index) => index + 1,
         },
-        { title: <FormattedMessage defaultMessage="Task" />, dataIndex: ['lecture', 'lectureName'] },
+        { title: <FormattedMessage defaultMessage="Task" />, dataIndex: ['lecture', 'lectureName'], width: '100px' },
         {
             title: <FormattedMessage defaultMessage="Tên sinh viên" />, dataIndex: ['student', 'account', 'fullName'],
         },
@@ -72,7 +78,7 @@ const TaskListPage = () => {
         },
 
 
-        mixinFuncs.renderStatusColumn({ width: '90px' }),
+        mixinFuncs.renderStatusColumn({ width: '9px' }),
         mixinFuncs.renderActionColumn(
             {
 
@@ -95,24 +101,23 @@ const TaskListPage = () => {
         },
 
         {
-            name: 'startDate',
+            key: 'fromDate',
             placeholder: 'Từ ngày',
             component: DatePickerField,
             componentProps: {
-                placeholder: translate.formatMessage({ id: 'selectDate', defaultMessage: 'Chọn ngày' }),
-                format: DATE_FORMAT_DISPLAY,
+                format: DEFAULT_FORMAT, 
+                showTime: true,        
+            
             },
-
         },
         {
-            name: 'startDate',
+            key: 'toDate',
             placeholder: 'Tới ngày',
             component: DatePickerField,
             componentProps: {
-                placeholder: translate.formatMessage({ id: 'selectDate', defaultMessage: 'Chọn ngày' }),
-                format: DATE_FORMAT_DISPLAY,
+                format: DEFAULT_FORMAT, 
+                showTime: true,       
             },
-
         },
     ];
 
@@ -120,7 +125,7 @@ const TaskListPage = () => {
     return (
         <PageWrapper
             routes={[
-                // { breadcrumbName: `${courseName.defaultMessage}`, path: location.state.path },
+                { breadcrumbName: <FormattedMessage defaultMessage="Courses" />, path: routes.CourseListPage.path },
                 { breadcrumbName: translate.formatMessage(message.objectName) },
             ]}
         >

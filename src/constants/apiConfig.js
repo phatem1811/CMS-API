@@ -441,15 +441,15 @@ const apiConfig = {
             headers: baseHeader,
             isRequiredTenantId: true,
         },
-        getBySubject: {
-            baseURL: `${apiTenantUrl}v1/task/get-by-subject/:id`,
-            method: 'GET',
-            headers: baseHeader,
-            isRequiredTenantId: true,
-        },
         asignAll: {
             baseURL: `${apiTenantUrl}v1/task/asign-all`,
             method: 'PosT',
+            headers: baseHeader,
+            isRequiredTenantId: true,
+        },
+        coursetask: {
+            baseURL: `${apiTenantUrl}v1/task/course-task/:id`,
+            method: 'GET',
             headers: baseHeader,
             isRequiredTenantId: true,
         },
@@ -457,6 +457,14 @@ const apiConfig = {
     student: {
         autocomplete: {
             baseURL: `${apiTenantUrl}v1/student/auto-complete`,
+            method: 'GET',
+            headers: baseHeader,
+            isRequiredTenantId: true,
+        },
+    },
+    lecture: {
+        getBySubject: {
+            baseURL: `${apiTenantUrl}v1/lecture/get-by-subject/:id`,
             method: 'GET',
             headers: baseHeader,
             isRequiredTenantId: true,

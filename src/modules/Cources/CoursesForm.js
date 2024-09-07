@@ -19,6 +19,9 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { DATE_FORMAT_DISPLAY, DATE_FORMAT_VALUE, DEFAULT_FORMAT } from '@constants/index';
 import { formatDateString } from '@utils/index';
+import { useIntl } from 'react-intl';
+import { STATE_COURSE_PREPARED, STATE_COURSE_STARTED, STATE_COURSE_FINISHED,
+    STATE_COURSE_CANCELED, STATE_COURSE_RECRUITED, courseStatusMessage } from '@constants/masterData';
 
 dayjs.extend(customParseFormat);
 
@@ -30,6 +33,15 @@ const CourseForm = ({ formId, actions, dataDetail, onSubmit, setIsChangedFormVal
     const translate = useTranslate();
     const statusValues = translate.formatKeys(statusOptions, ['label']);
 
+    const { formatMessage } = useIntl();
+    const statusOptionValues = [
+        { value: STATE_COURSE_PREPARED, label: formatMessage(courseStatusMessage.prepare) },
+        { value: STATE_COURSE_STARTED, label: formatMessage(courseStatusMessage.started) },
+        { value: STATE_COURSE_FINISHED, label: formatMessage(courseStatusMessage.finished) },
+        { value: STATE_COURSE_CANCELED, label: formatMessage(courseStatusMessage.recruited) },
+        { value: STATE_COURSE_RECRUITED, label: formatMessage(courseStatusMessage.cancled) },
+        
+    ];
 
     const { form, mixinFuncs, onValuesChange } = useBasicForm({
         onSubmit,
@@ -184,7 +196,7 @@ const CourseForm = ({ formId, actions, dataDetail, onSubmit, setIsChangedFormVal
                             required
                             label={<FormattedMessage defaultMessage="Tình trạng" />}
                             name="status"
-                            options={statusValues}
+                            options={statusOptionValues}
                         />
                     </Col>
                 </Row>
