@@ -29,9 +29,12 @@ const message = defineMessages({
 const CourseListPage = () => {
     const translate = useTranslate();
     const statusValues = translate.formatKeys(statusOptions, ['label']);
-    const [showPreviewModal, setShowPreviewModal] = useState(false);
-    const navigate = useNavigate();
+    
+
     const location = useLocation();
+    
+    const navigate = useNavigate();
+
     console.log("checklocation", location.pathname);
     const { data, mixinFuncs, queryFilter, loading, pagination } = useListBase({
         apiConfig: apiConfig.courses,
@@ -49,18 +52,20 @@ const CourseListPage = () => {
                 }
             };
             funcs.additionalActionColumnButtons = () => {
-                if (!mixinFuncs.hasPermission([apiConfig.courses.getById.baseURL])) return {};
+                if (!mixinFuncs.hasPermission([apiConfig.task.getList.baseURL])) return {};
                 return {
-                    task: ({ id, name, state, status }) => {
+                    task: ({ id, name, state, status, subject }) => {
+                        const subjectId = subject?.id || null; 
+                  
                         return (
                             <Button
                                 type="link"
                                 style={{ padding: 0 }}
                                 onClick={() => {
                                     navigate(
-                                        `/task?courseId=${id}&courseName=${encodeURIComponent(
+                                        `/course/task?courseId=${id}&courseName=${encodeURIComponent(
                                             name,
-                                        )}&courseState=${state}&courseStatus=${status}`, { state: { courseName: message.objectName, path: location.pathname } },
+                                        )}&subjectId=${subjectId}&state=${state}&courseStatus=${status}`, { state: { courseName: message.objectName, path: location.pathname } },
                                     );
                                 }}
                             >
@@ -75,6 +80,7 @@ const CourseListPage = () => {
 
 
     });
+   
 
 
     const columns = [
@@ -150,16 +156,7 @@ const CourseListPage = () => {
                     />
                 }
             />
-            <Modal
-                title={<FormattedMessage defaultMessage="Preview" />}
-                width={1000}
-                open={showPreviewModal}
-                footer={null}
-                centered
-                onCancel={() => setShowPreviewModal(false)}
-            >
 
-            </Modal>
         </PageWrapper>
     );
 };

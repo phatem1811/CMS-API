@@ -18,7 +18,7 @@ import { useLocation } from 'react-router-dom';
 
 const message = defineMessages({
     objectName: 'Task',
-    
+
 });
 
 const TaskListPage = () => {
@@ -26,7 +26,7 @@ const TaskListPage = () => {
     const [showPreviewModal, setShowPreviewModal] = useState(false);
     const location = useLocation();
     const courseName = location.state?.courseName;
-    console.log("check",location);
+    console.log("check", location);
     const { data, mixinFuncs, queryFilter, loading, pagination } = useListBase({
         apiConfig: apiConfig.task,
         options: {
@@ -120,7 +120,7 @@ const TaskListPage = () => {
     return (
         <PageWrapper
             routes={[
-                { breadcrumbName: `${courseName.defaultMessage}`, path: location.state.path },
+                // { breadcrumbName: `${courseName.defaultMessage}`, path: location.state.path },
                 { breadcrumbName: translate.formatMessage(message.objectName) },
             ]}
         >
