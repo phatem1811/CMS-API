@@ -5,12 +5,12 @@ import useListBase from '@hooks/useListBase';
 import apiConfig from '@constants/apiConfig';
 import React from 'react';
 import DatePickerField from '@components/common/form/DatePickerField';
-import {  Row, Col, Card, Input } from 'antd';
+import { Row, Col, Card, Input } from 'antd';
 // import { defineMessages, FormattedMessage } from 'react-intl';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import useTranslate from '@hooks/useTranslate';
 import { DEFAULT_TABLE_ITEM_SIZE } from '@constants/index';
-import { Navigate, useLocation , useNavigate } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { statusOptions } from '@constants/masterData';
 import { commonMessage } from '@locales/intl';
 import { BaseForm } from '@components/common/form/BaseForm';
@@ -20,9 +20,14 @@ import { Radio, Button, Modal } from 'antd';
 import { useState } from 'react';
 import useDisclosure from '@hooks/useDisclosure';
 import TextField from '@components/common/form/TextField';
-import { useForm } from 'antd/es/form/Form';    
+import { useForm } from 'antd/es/form/Form';
 import { DATE_FORMAT_DISPLAY, DATE_FORMAT_VALUE, DEFAULT_FORMAT } from '@constants/index';
 import { formatDateString } from '@utils/index';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import routes from '../route';
+
+dayjs.extend(customParseFormat);
 
 // const message = defineMessages({
 //     id: 'course.objectName',
@@ -40,13 +45,13 @@ const CreateTask = () => {
     const [selectedLecture, setselectedLecture] = useState(null);
     const navigate = useNavigate();
     const handleRadioChange = (e) => {
-        setselectedLecture(e.target.value); 
+        setselectedLecture(e.target.value);
     };
 
     const translate = useTranslate();
     const statusValues = translate.formatKeys(statusOptions, ['label']);
 
-    const {  execute } = useFetch(apiConfig.task.asignAll, {
+    const { execute } = useFetch(apiConfig.task.asignAll, {
         immediate: false,
     });
 
@@ -69,22 +74,22 @@ const CreateTask = () => {
         open();
     };
     const handleSubmit = async (values) => {
-        values.startDate = formatDateString(values.startDate, DEFAULT_FORMAT);
+        values.dateRegister = dayjs().format(DEFAULT_FORMAT);
         values.dueDate = formatDateString(values.dueDate, DEFAULT_FORMAT);
         const formData = {
             ...values,
-            courseId,             
-            lectureId: selectedLecture ,
+            courseId,
+            lectureId: selectedLecture,
         };
         console.log("check value", formData);
         try {
             await execute({
-                method: 'POST', 
+                method: 'POST',
                 data: formData,
                 onCompleted: (response) => {
                     console.log('Task created successfully:', response);
-                    // setIsOpen(false); // Close the modal after successful submission
-                    navigate( `/course/task${queryString}`);
+
+                    navigate(`/course/task${queryString}`);
 
                 },
                 onError: (error) => {
@@ -92,7 +97,7 @@ const CreateTask = () => {
                 },
             });
         } catch (error) {
-            console.error('Error saving task:', error); // Handle any errors
+            console.error('Error saving task:', error);
         }
     };
 
@@ -143,7 +148,9 @@ const CreateTask = () => {
 
     return (
         <PageWrapper routes={[
-            { breadcrumbName: 'bài giảng' },
+            { breadcrumbName: <FormattedMessage defaultMessage="Courses" />, path: routes.CourseListPage.path },
+            { breadcrumbName: <FormattedMessage defaultMessage="Task" />, path: routes.TaskListPage.path },
+            { breadcrumbName: 'Bài giảng' },
         ]}>
             <BaseForm>
                 <ListPage >
@@ -171,8 +178,8 @@ const CreateTask = () => {
                 open={isOpen}
                 onCancel={close}
                 footer={null}
-                width={950} 
-                style={{ top: 20 }} 
+                width={950}
+                style={{ top: 20 }}
             >
                 <BaseForm
                     id="create-task-form"
@@ -216,7 +223,7 @@ const CreateTask = () => {
                             </Col>
                         </Row>
                         <div style={{ marginTop: '16px' }}>
-                        
+
                             <TextField
                                 required
                                 label={<FormattedMessage defaultMessage="Chú ý" />}

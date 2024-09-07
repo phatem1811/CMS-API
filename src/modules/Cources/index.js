@@ -19,6 +19,10 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { formatMoney } from '@utils/formatMoney';
 import { useNavigate, useLocation } from "react-router-dom";
 import { BookOutlined } from '@ant-design/icons';
+import { formatDateString } from '@utils/index';
+import { useIntl } from 'react-intl';
+import { STATE_COURSE_PREPARED, STATE_COURSE_STARTED, STATE_COURSE_FINISHED,
+    STATE_COURSE_CANCELED, STATE_COURSE_RECRUITED, courseStatusMessage } from '@constants/masterData';
 const message = defineMessages({
     objectName: 'Khóa học',
     fee: 'Học phí',
@@ -30,6 +34,15 @@ const CourseListPage = () => {
     const translate = useTranslate();
     const statusValues = translate.formatKeys(statusOptions, ['label']);
     
+    const { formatMessage } = useIntl();
+    const statusOptionValues = [
+        { value: STATE_COURSE_PREPARED, label: formatMessage(courseStatusMessage.prepare) },
+        { value: STATE_COURSE_STARTED, label: formatMessage(courseStatusMessage.started) },
+        { value: STATE_COURSE_FINISHED, label: formatMessage(courseStatusMessage.finished) },
+        { value: STATE_COURSE_CANCELED, label: formatMessage(courseStatusMessage.recruited) },
+        { value: STATE_COURSE_RECRUITED, label: formatMessage(courseStatusMessage.cancled) },
+        
+    ];
 
     const location = useLocation();
     
@@ -137,7 +150,7 @@ const CourseListPage = () => {
             key: 'status',
             placeholder: translate.formatMessage(commonMessage.status),
             type: FieldTypes.SELECT,
-            options: statusValues,
+            options: statusOptionValues,
         },
     ];
 

@@ -13,7 +13,8 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { DATE_FORMAT_DISPLAY, DATE_FORMAT_VALUE } from '@constants/index';
 import DatePickerField from '@components/common/form/DatePickerField';
 import { useLocation } from 'react-router-dom';
-
+import  routes from '../route';
+import dayjs from 'dayjs';
 
 
 const message = defineMessages({
@@ -100,24 +101,23 @@ const TaskListPage = () => {
         },
 
         {
-            name: 'startDate',
+            key: 'fromDate',
             placeholder: 'Từ ngày',
             component: DatePickerField,
             componentProps: {
-                placeholder: translate.formatMessage({ id: 'selectStartDate' }),
-                format: DATE_FORMAT_DISPLAY,
+                format: DEFAULT_FORMAT, 
+                showTime: true,        
+            
             },
-
         },
         {
-            name: 'startDate',
+            key: 'toDate',
             placeholder: 'Tới ngày',
             component: DatePickerField,
             componentProps: {
-                placeholder: translate.formatMessage({ id: 'selectDueDate' }),
-                format: DATE_FORMAT_DISPLAY,
+                format: DEFAULT_FORMAT, 
+                showTime: true,       
             },
-
         },
     ];
 
@@ -125,7 +125,7 @@ const TaskListPage = () => {
     return (
         <PageWrapper
             routes={[
-                // { breadcrumbName: `${courseName.defaultMessage}`, path: location.state.path },
+                { breadcrumbName: <FormattedMessage defaultMessage="Courses" />, path: routes.CourseListPage.path },
                 { breadcrumbName: translate.formatMessage(message.objectName) },
             ]}
         >
