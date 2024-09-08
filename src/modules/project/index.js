@@ -7,7 +7,7 @@ import { UserOutlined } from '@ant-design/icons';
 import AvatarField from '@components/common/form/AvatarField';
 import ListPage from '@components/common/layout/ListPage';
 import PageWrapper from '@components/common/layout/PageWrapper';
-import { AppConstants, categoryKind, DEFAULT_FORMAT, DEFAULT_TABLE_ITEM_SIZE } from '@constants';
+import { AppConstants, categoryKind, DEFAULT_FORMAT,DATE_FORMAT_DISPLAY, DEFAULT_TABLE_ITEM_SIZE } from '@constants';
 import { FieldTypes } from '@constants/formConfig';
 import DatePickerField from '@components/common/form/DatePickerField';
 import { BaseForm } from '@components/common/form/BaseForm';
@@ -20,7 +20,17 @@ import { DollarTwoTone } from '@ant-design/icons';
 import { formatDateString } from '@utils/index';
 import { useIntl } from 'react-intl';
 import { useForm } from 'antd/es/form/Form';
+import useFetch from '@hooks/useFetch';
+import useNotification from '@hooks/useNotification';
 import useDisclosure from '@hooks/useDisclosure';
+import moment from 'moment';
+import { BaseTooltip } from '@components/common/form/BaseTooltip';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import routes from './route';
+
+import { DatePicker } from 'antd';
+dayjs.extend(customParseFormat);
 import {
     STATE_PROJECT_CREATE, STATE_PROJECT_RUNNING, STATE_PROJECT_DONE, statusOptions,
     STATE_PROJECT_CANCEL, STATE_PROJECT_FAILED, projectStateMessage } from '@constants/masterData';
@@ -34,6 +44,7 @@ const ProjectListPage = () => {
     const statusValues = translate.formatKeys(statusOptions, ['label']);
     const [isOpen, { open, close }] = useDisclosure();
     const { formatMessage } = useIntl();
+    const notification = useNotification();
     const stateOptionValues = [
         { value: STATE_PROJECT_CREATE, label: formatMessage(projectStateMessage.create) },
         { value: STATE_PROJECT_RUNNING, label: formatMessage(projectStateMessage.running) },
@@ -43,9 +54,120 @@ const ProjectListPage = () => {
 
     ];
     const [form] = useForm();
-    const handleOpenModal = (project) => {
+    const navigate = useNavigate();
+    const [isEditing, setIsEditing] = useState(false);
+    const [salaryResisterId, setSalaryResisterId] = useState(null);
+    const [projectId, setProjectId] = useState();
+   
+    const [selectedDate, setSelectedDate] = useState(null);
 
-        open();
+    const { loading: fetchingDate, execute: fetchSalaryPeriodDate } = useFetch(apiConfig.registerSalary.registerSalaryPeriodById,
+        {
+            immediate: false,
+            mappingData: ({ data }) => data.dueDate,
+        },
+    );
+
+    const { execute: registerSalary  } = useFetch(apiConfig.registerSalary.create,
+        {
+            immediate: false,
+        },
+    );
+    const { execute: updateRegisterSalary  } = useFetch(apiConfig.registerSalary.update,
+        {
+            immediate: false,
+        },
+    );
+    const handleSubmit = async (values) => {
+        values.dueDate = formatDateString(values.dueDate, DEFAULT_FORMAT);
+        if(!isEditing)
+        {
+            const dataCreate = {
+                ...values, projectId,            
+            };
+            try {
+                await registerSalary({
+                    method: 'POST',
+                    data: dataCreate,
+                    onCompleted: (response) => {      
+                              
+                        navigate( `/project`);
+                        // navigate(  routes.ProjectListPage.path);
+                    },
+                    onError: (error) => {
+                        console.error('Error creating task:', error);
+                    },
+                });
+            } catch (error) {
+                console.error('Error saving task:', error);
+            }
+        }
+        else
+        {
+            const dataUpdate = {
+                ...values,  
+                id: salaryResisterId ,        
+            };
+            try {
+                await updateRegisterSalary({
+                    method: 'PUT',
+                    data: dataUpdate,
+                    onCompleted: (response) => {
+
+                        return  `/project`;
+
+                        // navigate(  routes.ProjectListPage.path);
+    
+                    },
+                    onError: (error) => {
+                        console.error('Error creating task:', error);
+                    },
+                });
+            } catch (error) {
+                console.error('Error saving task:', error);
+            }
+        }
+
+    };
+
+    const handleIconClick = async (id,duedate, registerSalaryId) => {
+        duedate != null ? setIsEditing(true) : setIsEditing(false);
+        registerSalaryId != null ? setSalaryResisterId(registerSalaryId) : null;
+        
+        setProjectId(id);
+        try {
+            const result = await fetchSalaryPeriodDate({
+                pathParams: { projectId: id },
+                onCompleted: (data) => {
+                    if (data.data ) {
+                     
+                        setSelectedDate(dayjs(data.data, DATE_FORMAT_DISPLAY));
+
+                    } else {
+
+                        setSelectedDate(null);
+                    }
+                    open();
+                },
+                onError: (error) => {
+                    notification({
+                        type: 'error',
+                        title: 'Error',
+                        message: error.message || 'Failed to fetch salary period date.',
+                    });
+                },
+            });
+            if (duedate) {
+                form.setFieldsValue({
+                    dueDate : dayjs(duedate, DATE_FORMAT_DISPLAY),
+    
+                });
+            } else {
+                form.resetFields(); 
+            }
+        } catch (error) {
+            console.error('Failed to fetch salary period date:', error.message);
+        }
     };
 
 
@@ -65,18 +187,24 @@ const ProjectListPage = () => {
                 }
             };
             funcs.additionalActionColumnButtons = () => {
-
                 return {
-
-                    salary: () => {
+                    salary: ({ id, isRegisteredSalaryPeriod, registerSalaryPeriod }) => {
+                   
+                        const duedate = isRegisteredSalaryPeriod ? registerSalaryPeriod.dueDate : null;
+                        const registerSalaryId = isRegisteredSalaryPeriod ? registerSalaryPeriod.id : null;
+                        
                         return (
-                            <Button
-                                type="link"
-                                style={{ padding: 0 }}
-                                onClick={ handleOpenModal }
-                            >
-                                < DollarTwoTone />
-                            </Button>
+                            <BaseTooltip title={isRegisteredSalaryPeriod ? "Cập nhật kì lương" : "Đăng kí kì lương"}>
+                                <Button
+                                    type="link"
+                                    style={{ padding: 0 }}
+                                    onClick={() => handleIconClick(id,duedate, registerSalaryId)}
+                                >
+                                    <DollarTwoTone
+                                        twoToneColor={isRegisteredSalaryPeriod ? "gray" : "blue"}
+                                    />
+                                </Button>
+                            </BaseTooltip>
                         );
                     },
                 };
@@ -187,30 +315,48 @@ const ProjectListPage = () => {
                     />
                 }
             />
+
             <Modal
-                title="Đăng ký tính lương dự án"
+                title={isEditing ? "Cập nhật tính lương dự án" : "Đăng ký tính lương dự án"}
                 open={isOpen}
-                onCancel={close} // Close modal using the hook
+                onCancel={close}
                 footer={null}
             >
-                <BaseForm form={form} onFinish={handleFinish}>
-                    <BaseForm.Item
-                        label="Ngày kết thúc"
-                        name="endDate"
-                        rules={[{ required: true, message: 'Vui lòng chọn ngày kết thúc' }]}
-                    >
-                        <DatePickerField
-                            format={DEFAULT_FORMAT}
-                            style={{ width: '100%' }}
-                        />
-                    </BaseForm.Item>
-                    <BaseForm.Item>
-                        <Button type="primary" htmlType="submit">
-                            Lưu
-                        </Button>
-                    </BaseForm.Item>
+                <BaseForm
+                    onFinish={handleSubmit}
+                    form={form}
+                    style={{ margin: 0 }}
+                >
+                    <DatePickerField
+                        name="dueDate"
+                        label={<FormattedMessage defaultMessage="Ngày kết thúc" />}
+
+                        format={DATE_FORMAT_DISPLAY}
+                        
+                        disabledDate={(current) => current && current <= selectedDate.startOf('day')}
+                        // disabledDate={(current) => current && current < selectedDate.startOf('day')}
+                        style={{ width: '100%' }}
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Vui lòng chọn kết thúc',
+                            },
+                        ]}
+
+
+                    />
+                    <Button type="primary" htmlType="submit">
+                        {isEditing ? "Cập nhật" : "Đăng ký"} {/* Nút thay đổi nội dung dựa trên selectedDueDate */}
+                    </Button>
+
                 </BaseForm>
+
+
             </Modal>
+
+
+
+         
 
         </PageWrapper>
     );

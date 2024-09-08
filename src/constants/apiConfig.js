@@ -504,8 +504,20 @@ const apiConfig = {
     },
     registerSalary: {
         registerSalaryPeriodById: {
-            baseURL: `${apiTenantUrl}v1/register-salary-period/new-salary-period-date/:id`,
+            baseURL: `${apiTenantUrl}v1/register-salary-period/new-salary-period-date/:projectId`,
             method: 'GET',
+            headers: baseHeader,
+            isRequiredTenantId: true,
+        },
+        update: {
+            baseURL: `${apiTenantUrl}v1/register-salary-period/update`,
+            method: 'PUT',
+            headers: baseHeader,
+            isRequiredTenantId: true,
+        },
+        create: {
+            baseURL: `${apiTenantUrl}v1/register-salary-period/create`,
+            method: 'POST',
             headers: baseHeader,
             isRequiredTenantId: true,
         },
