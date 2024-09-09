@@ -5,24 +5,27 @@ import useFetch from '@hooks/useFetch';
 import useSaveBase from '@hooks/useSaveBase';
 import React, { useEffect } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
-import CoursesForm from './CoursesForm';
-import routes from './route';
+import StoryForm from './StoryForm';
+import routes from '../route';
 import useTranslate from '@hooks/useTranslate';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 
 const message = defineMessages({
-    objectName: 'Khóa học',
+    objectName: 'Story',
 });
 
-const CoursesSaveBase = () => {
+const StorySaveBase = () => {
     const translate = useTranslate();
+    const location = useLocation();
+    const queryString = location.search;
     const { detail, mixinFuncs, loading, setIsChangedFormValues, isEditing, title } = useSaveBase({
         apiConfig: {
-            getById: apiConfig.courses.getById,
-            create: apiConfig.courses.create,
-            update: apiConfig.courses.update,
+            getById: apiConfig.story.getById,
+            create: apiConfig.story.create,
+            update: apiConfig.story.update,
         },
         options: {
-            getListUrl: routes.CourseListPage.path,
+            getListUrl: routes.ProjectDetailListPage.path,
             objectName: translate.formatMessage(message.objectName),
         },
         override: (funcs) => {
@@ -32,29 +35,25 @@ const CoursesSaveBase = () => {
                     id: detail.id,
                 };
             };
-            funcs.prepareCreateData = (data) => {
-                return {
-                    ...data,
-                    kind: categoryKind.news,
-                };
-            };
+
         },
     });
 
-    
+
 
     return (
         <PageWrapper
-            
+
             routes={[
-                { breadcrumbName: <FormattedMessage defaultMessage="Khóa học" />, path: routes.CourseListPage.path },
+                { breadcrumbName: 'Dự án', path: routes.ProjectListPage.path },
+                { breadcrumbName: 'Conference and Event Management System',  path: `/project/project-tab${queryString}` },
                 { breadcrumbName: title },
             ]}
             title={title}
         >
-            <CoursesForm
-
+            <StoryForm
                 setIsChangedFormValues={setIsChangedFormValues}
+
                 dataDetail={detail ? detail : {}}
                 formId={mixinFuncs.getFormId()}
                 isEditing={isEditing}
@@ -65,4 +64,4 @@ const CoursesSaveBase = () => {
     );
 };
 
-export default CoursesSaveBase;
+export default StorySaveBase;

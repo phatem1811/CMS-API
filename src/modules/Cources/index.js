@@ -21,7 +21,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { BookOutlined } from '@ant-design/icons';
 import { formatDateString } from '@utils/index';
 import { useIntl } from 'react-intl';
-import { STATE_COURSE_PREPARED, STATE_COURSE_STARTED, STATE_COURSE_FINISHED,
+import {
+    STATE_COURSE_PREPARED, STATE_COURSE_STARTED, STATE_COURSE_FINISHED,
     STATE_COURSE_CANCELED, STATE_COURSE_RECRUITED, courseStatusMessage } from '@constants/masterData';
 const message = defineMessages({
     objectName: 'Khóa học',
@@ -33,7 +34,7 @@ const message = defineMessages({
 const CourseListPage = () => {
     const translate = useTranslate();
     const statusValues = translate.formatKeys(statusOptions, ['label']);
-    
+
     const { formatMessage } = useIntl();
     const statusOptionValues = [
         { value: STATE_COURSE_PREPARED, label: formatMessage(courseStatusMessage.prepare) },
@@ -41,11 +42,11 @@ const CourseListPage = () => {
         { value: STATE_COURSE_FINISHED, label: formatMessage(courseStatusMessage.finished) },
         { value: STATE_COURSE_CANCELED, label: formatMessage(courseStatusMessage.recruited) },
         { value: STATE_COURSE_RECRUITED, label: formatMessage(courseStatusMessage.cancled) },
-        
+
     ];
 
     const location = useLocation();
-    
+
     const navigate = useNavigate();
 
     console.log("checklocation", location.pathname);
@@ -65,11 +66,11 @@ const CourseListPage = () => {
                 }
             };
             funcs.additionalActionColumnButtons = () => {
-                
+
                 return {
                     task: ({ id, name, state, status, subject }) => {
-                        const subjectId = subject?.id || null; 
-                     
+                        const subjectId = subject?.id || null;
+
                         return (
                             <Button
                                 type="link"
@@ -93,7 +94,7 @@ const CourseListPage = () => {
 
 
     });
-   
+
 
 
     const columns = [
@@ -117,17 +118,32 @@ const CourseListPage = () => {
         {
             title: <FormattedMessage defaultMessage="Học phí" />,
             dataIndex: 'fee',
+            align: 'right',
+            width: '30px',
             render: (fee) => formatMoney(fee),
         },
         {
             title: <FormattedMessage defaultMessage="Ngày Kết Thúc" />,
             width: 180,
             dataIndex: 'dateEnd',
+            align: 'right',
             render: (dateEnd) => {
                 const createdDateLocal = convertUtcToLocalTime(dateEnd, DEFAULT_FORMAT, DEFAULT_FORMAT);
                 return <div>{createdDateLocal}</div>;
             },
         },
+        {
+            title: <FormattedMessage defaultMessage="Tình trạng" />,
+            width: 180,
+            dataIndex: 'state',
+            render: (status) => {
+               
+                const statusOption = statusOptionValues.find(option => option.value === status);
+                // 
+                return statusOption ? statusOption.label : <FormattedMessage defaultMessage="Không xác định" />;
+            },
+        },
+        
 
         mixinFuncs.renderStatusColumn({ width: '90px' }),
         mixinFuncs.renderActionColumn(

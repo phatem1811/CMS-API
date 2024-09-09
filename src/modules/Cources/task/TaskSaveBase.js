@@ -9,12 +9,15 @@ import TaskForm from './TaskForm';
 import routes from '../route';
 import useTranslate from '@hooks/useTranslate';
 import TaskListPage from '.';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 const message = defineMessages({
     objectName: 'Task',
 });
 
 const TaskSaveBase = () => {
     const translate = useTranslate();
+    const location = useLocation();
+    const queryString = location.search;
     const { detail, mixinFuncs, loading, setIsChangedFormValues, isEditing, title } = useSaveBase({
         apiConfig: {
             getById: apiConfig.task.getById,
@@ -25,7 +28,7 @@ const TaskSaveBase = () => {
             getListUrl: routes.TaskListPage.path,
             objectName: translate.formatMessage(message.objectName),
         },
-        override: (funcs) => {
+        override: (funcs) => {  
             funcs.prepareUpdateData = (data) => {
                 return {
                     ...data,
@@ -40,9 +43,9 @@ const TaskSaveBase = () => {
         <PageWrapper
 
             routes={[
-                { breadcrumbName: <FormattedMessage defaultMessage="Courses" />, path: routes.CourseListPage.path },
-                { breadcrumbName: <FormattedMessage defaultMessage="Task" />, path: routes.TaskListPage.path },
-               
+                { breadcrumbName: <FormattedMessage defaultMessage="Khóa học" />, path: routes.CourseListPage.path },
+                { breadcrumbName: <FormattedMessage defaultMessage="Task" />, path: `/course/task${queryString}` },
+
                 { breadcrumbName: title },
             ]}
             title={title}

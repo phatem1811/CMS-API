@@ -15,7 +15,9 @@ import DatePickerField from '@components/common/form/DatePickerField';
 import { useLocation } from 'react-router-dom';
 import  routes from '../route';
 import dayjs from 'dayjs';
-
+import { formatDateString } from '@utils/index';
+import { STATE_TASK_ASIGN, STATE_TASK_DONE, taskStateMessage } from '@constants/masterData';
+import { useIntl } from 'react-intl';
 
 const message = defineMessages({
     objectName: 'Task',
@@ -30,6 +32,13 @@ const TaskListPage = () => {
     const queryString = location.search;
     const courseName = location.state?.courseName;
     console.log("check", location);
+
+    const { formatMessage } = useIntl();
+    const stateValues = [
+        { value: STATE_TASK_ASIGN, label: formatMessage(taskStateMessage.asign) },
+        { value: STATE_TASK_DONE, label: formatMessage(taskStateMessage.done) },
+    ];
+
     const { data, mixinFuncs, queryFilter, loading, pagination } = useListBase({
         apiConfig: apiConfig.task,
         options: {
@@ -48,13 +57,19 @@ const TaskListPage = () => {
             funcs.getCreateLink = () => {
                 return `${pagePath}/lecture${queryString}`;
             };
+           
+            funcs.getItemDetailLink = (record) => {
+                const id = record?.id;
+                console.log("check taask id", id);
+                return `${pagePath}/${id}${queryString}`;
+            };
 
         },
 
 
     });
 
-
+    // console.log("check task id", data);
     const columns = [
         {
             title: '#',
@@ -74,8 +89,20 @@ const TaskListPage = () => {
             title: <FormattedMessage defaultMessage="Ngày kết thúc" />, dataIndex: ['dueDate'],
         },
         {
-            title: <FormattedMessage defaultMessage="Ngày kết thúc" />, dataIndex: ['dateComplete'],
+            title: <FormattedMessage defaultMessage="Ngày hoàn thành" />, dataIndex: ['dateComplete'],
         },
+        {
+            title: <FormattedMessage defaultMessage="Tình trạng" />,
+            width: 100,
+            dataIndex: 'status',
+            render: (status) => {
+               
+                const stateOption = stateValues.find(option => option.value === status);
+            
+                return stateOption ? stateOption.label : <FormattedMessage defaultMessage="Không xác định" />;
+            },
+        },
+        
 
 
         mixinFuncs.renderStatusColumn({ width: '9px' }),
@@ -125,7 +152,7 @@ const TaskListPage = () => {
     return (
         <PageWrapper
             routes={[
-                { breadcrumbName: <FormattedMessage defaultMessage="Courses" />, path: routes.CourseListPage.path },
+                { breadcrumbName: <FormattedMessage defaultMessage="Khóa học" />, path: routes.CourseListPage.path },
                 { breadcrumbName: translate.formatMessage(message.objectName) },
             ]}
         >

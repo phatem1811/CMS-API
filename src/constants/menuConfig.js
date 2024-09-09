@@ -34,4 +34,17 @@ export const navMenuConfig = [
             },
         ],
     },
+    {
+
+        label: <FormattedMessage defaultMessage="Quản lý dự án" />,
+        key: 'quan-ly-du-an',
+        permission: apiConfig.courses.getList.baseURL,
+        children: [
+            {
+                label: <FormattedMessage defaultMessage="Dự án" />,
+                key: 'project',
+                path: routes.ProjectListPage.path,
+            },
+        ],
+    },
 ];
