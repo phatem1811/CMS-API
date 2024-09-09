@@ -7,7 +7,7 @@ import { UserOutlined } from '@ant-design/icons';
 import AvatarField from '@components/common/form/AvatarField';
 import ListPage from '@components/common/layout/ListPage';
 import PageWrapper from '@components/common/layout/PageWrapper';
-import { AppConstants, categoryKind, DEFAULT_FORMAT,DATE_FORMAT_DISPLAY, DEFAULT_TABLE_ITEM_SIZE } from '@constants';
+import { AppConstants, categoryKind, DEFAULT_FORMAT, DATE_FORMAT_DISPLAY, DEFAULT_TABLE_ITEM_SIZE } from '@constants';
 import { FieldTypes } from '@constants/formConfig';
 import DatePickerField from '@components/common/form/DatePickerField';
 import { BaseForm } from '@components/common/form/BaseForm';
@@ -58,7 +58,7 @@ const ProjectListPage = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [salaryResisterId, setSalaryResisterId] = useState(null);
     const [projectId, setProjectId] = useState();
-   
+
     const [selectedDate, setSelectedDate] = useState(null);
 
     const { loading: fetchingDate, execute: fetchSalaryPeriodDate } = useFetch(apiConfig.registerSalary.registerSalaryPeriodById,
@@ -68,30 +68,29 @@ const ProjectListPage = () => {
         },
     );
 
-    const { execute: registerSalary  } = useFetch(apiConfig.registerSalary.create,
+    const { execute: registerSalary } = useFetch(apiConfig.registerSalary.create,
         {
             immediate: false,
         },
     );
-    const { execute: updateRegisterSalary  } = useFetch(apiConfig.registerSalary.update,
+    const { execute: updateRegisterSalary } = useFetch(apiConfig.registerSalary.update,
         {
             immediate: false,
         },
     );
     const handleSubmit = async (values) => {
         values.dueDate = formatDateString(values.dueDate, DEFAULT_FORMAT);
-        if(!isEditing)
-        {
+        if (!isEditing) {
             const dataCreate = {
-                ...values, projectId,            
+                ...values, projectId,
             };
             try {
                 await registerSalary({
                     method: 'POST',
                     data: dataCreate,
-                    onCompleted: (response) => {      
-                              
-                        navigate( `/project`);
+                    onCompleted: (response) => {
+
+                        navigate(`/project`);
                         // navigate(  routes.ProjectListPage.path);
                     },
                     onError: (error) => {
@@ -102,11 +101,10 @@ const ProjectListPage = () => {
                 console.error('Error saving task:', error);
             }
         }
-        else
-        {
+        else {
             const dataUpdate = {
-                ...values,  
-                id: salaryResisterId ,        
+                ...values,
+                id: salaryResisterId,
             };
             try {
                 await updateRegisterSalary({
@@ -114,10 +112,10 @@ const ProjectListPage = () => {
                     data: dataUpdate,
                     onCompleted: (response) => {
 
-                        return  `/project`;
+                        return `/project`;
 
                         // navigate(  routes.ProjectListPage.path);
-    
+
                     },
                     onError: (error) => {
                         console.error('Error creating task:', error);
@@ -130,17 +128,17 @@ const ProjectListPage = () => {
 
     };
 
-    const handleIconClick = async (id,duedate, registerSalaryId) => {
+    const handleIconClick = async (id, duedate, registerSalaryId) => {
         duedate != null ? setIsEditing(true) : setIsEditing(false);
         registerSalaryId != null ? setSalaryResisterId(registerSalaryId) : null;
-        
+
         setProjectId(id);
         try {
             const result = await fetchSalaryPeriodDate({
                 pathParams: { projectId: id },
                 onCompleted: (data) => {
-                    if (data.data ) {
-                     
+                    if (data.data) {
+
                         setSelectedDate(dayjs(data.data, DATE_FORMAT_DISPLAY));
 
                     } else {
@@ -159,11 +157,11 @@ const ProjectListPage = () => {
             });
             if (duedate) {
                 form.setFieldsValue({
-                    dueDate : dayjs(duedate, DATE_FORMAT_DISPLAY),
-    
+                    dueDate: dayjs(duedate, DATE_FORMAT_DISPLAY),
+
                 });
             } else {
-                form.resetFields(); 
+                form.resetFields();
             }
         } catch (error) {
             console.error('Failed to fetch salary period date:', error.message);
@@ -189,16 +187,16 @@ const ProjectListPage = () => {
             funcs.additionalActionColumnButtons = () => {
                 return {
                     salary: ({ id, isRegisteredSalaryPeriod, registerSalaryPeriod }) => {
-                   
+
                         const duedate = isRegisteredSalaryPeriod ? registerSalaryPeriod.dueDate : null;
                         const registerSalaryId = isRegisteredSalaryPeriod ? registerSalaryPeriod.id : null;
-                        
+
                         return (
                             <BaseTooltip title={isRegisteredSalaryPeriod ? "Cập nhật kì lương" : "Đăng kí kì lương"}>
                                 <Button
                                     type="link"
                                     style={{ padding: 0 }}
-                                    onClick={() => handleIconClick(id,duedate, registerSalaryId)}
+                                    onClick={() => handleIconClick(id, duedate, registerSalaryId)}
                                 >
                                     <DollarTwoTone
                                         twoToneColor={isRegisteredSalaryPeriod ? "gray" : "blue"}
@@ -234,7 +232,24 @@ const ProjectListPage = () => {
                 />
             ),
         },
-        { title: <FormattedMessage defaultMessage="Tên dự án" />, dataIndex: 'name', width: 400 },
+        {
+            title: <FormattedMessage defaultMessage="Tên dự án" />,
+            dataIndex: 'name', width: 400,
+            render: (name, record) => (
+                <a
+                    onClick={() => {
+                        const projectId = record.id;
+                        const projectName = encodeURIComponent(name);
+                        const url = `/project/project-tab?projectId=${projectId}&projectName=${projectName}&active=true`;
+                        navigate(url);
+                    }}
+                >
+                    {name}
+                </a>
+            ),
+
+
+        },
         {
             title: <FormattedMessage defaultMessage="Ngày bắt đầu" />,
             width: 180,
@@ -332,7 +347,7 @@ const ProjectListPage = () => {
                         label={<FormattedMessage defaultMessage="Ngày kết thúc" />}
 
                         format={DATE_FORMAT_DISPLAY}
-                        
+
                         disabledDate={(current) => current && current <= selectedDate.startOf('day')}
                         // disabledDate={(current) => current && current < selectedDate.startOf('day')}
                         style={{ width: '100%' }}
@@ -356,7 +371,7 @@ const ProjectListPage = () => {
 
 
 
-         
+
 
         </PageWrapper>
     );
