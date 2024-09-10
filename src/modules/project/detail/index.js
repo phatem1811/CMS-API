@@ -7,6 +7,7 @@ import { defineMessages } from 'react-intl';
 import { settingGroups } from '@constants/masterData';
 import routes from '@routes';
 import StoryListPage from './Story';
+import MemberListPage from './member';
 const message = defineMessages({
     members: 'Thành viên',
     story: 'Story',
@@ -46,6 +47,7 @@ const ProjectDetailListPage = () => {
                             key: 'members',
                             label: translate.formatMessage(message.members),
                             // children: activeTab == settingGroups.PAGE ,
+                            children: <MemberListPage />,
                         },
 
                     ]}

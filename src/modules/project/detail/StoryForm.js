@@ -187,6 +187,7 @@ const StoryForm = ({ formId, actions, dataDetail, onSubmit, setIsChangedFormValu
                             label={<FormattedMessage defaultMessage="Description" />}
                             name="description"
                             type="textarea"
+                            style= {{ height: '200px' }}
                         />
                     </Col>
                 </Row>

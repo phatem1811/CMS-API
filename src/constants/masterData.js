@@ -3,6 +3,7 @@ import { defineMessages } from 'react-intl';
 import {
     nationKindMessage,
     actionMessage,
+    
 } from './intl';
 
 const commonMessage = defineMessages({
@@ -57,7 +58,13 @@ export const projectStateMessage = defineMessages({
     failed: 'thất bại',
 });
 
-
+export const stateProjectOptions = [
+    { value: STATE_PROJECT_CREATE, label: projectStateMessage.create, color: 'yellow' },
+    { value: STATE_PROJECT_RUNNING, label: projectStateMessage.running, color: 'blue' },
+    { value: STATE_PROJECT_DONE, label: projectStateMessage.done, color: '#CC0000' },
+    { value: STATE_PROJECT_CANCEL, label: projectStateMessage.cancel, color: '#CC0000' },
+    { value: STATE_PROJECT_FAILED, label: projectStateMessage.failed, color: '#CC0000' },
+];
 
 export const courseStatusMessage = defineMessages({
     prepare: 'Chưa bắt đầu',
@@ -106,6 +113,7 @@ export const kindPost = [
     },
    
 ];
+
 
 export const settingGroups = {
     GENERAL: 'general',
