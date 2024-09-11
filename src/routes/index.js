@@ -14,6 +14,7 @@ import settingsRoutes from '@modules/settings/routes';
 
 import coursesRoutes from '@modules/Cources/route';
 import projectRoutes from '@modules/project/route';
+import subjectRoutes from '@modules/subject/route';
 
 /*
     auth
@@ -76,24 +77,14 @@ const routes = {
         auth: true,
         title: 'Settings page',
     },
-    // CourseListPage: {
-    //     path: '/course',
-    //     component: CourseListPage,
-    //     auth: true,
-    //     title: 'Courses page',
-    // },
-    // CoursesSaveBase: {
-    //     path: '/course/:id',
-    //     component: CoursesSaveBase,
-    //     auth: true,
-    //     title: 'Courses page',
-    // },
+
     ...adminsRoutes,
     ...newsRoutes,
     ...nationRoutes,
     ...settingsRoutes,
     ...coursesRoutes,
     ...projectRoutes,
+    ...subjectRoutes,
 
     // keep this at last
     notFound: {

@@ -6,21 +6,7 @@ import apiConfig from './apiConfig';
 import { IconSettings } from '@tabler/icons-react';
 
 export const navMenuConfig = [
-    {
-        label: <FormattedMessage defaultMessage="Quản lý hệ thống" />,
-        key: 'quan-ly-he-thong',
-
-        // permission: apiConfig.category.getList.baseURL,
-        children: [
-            {
-                label: <FormattedMessage defaultMessage="Cài đặt" />,
-                key: 'setting',
-                path: routes.settingsPage.path,
-
-            },
-
-        ],
-    },
+    
     {
 
         label: <FormattedMessage defaultMessage="Quản lý khóa học" />,
@@ -31,6 +17,11 @@ export const navMenuConfig = [
                 label: <FormattedMessage defaultMessage="Khóa học" />,
                 key: 'course',
                 path: routes.CourseListPage.path,
+            },
+            {
+                label: <FormattedMessage defaultMessage="Môn học" />,
+                key: 'subject',
+                path: routes.SubjectListPage.path,
             },
         ],
     },
@@ -45,6 +36,21 @@ export const navMenuConfig = [
                 key: 'project',
                 path: routes.ProjectListPage.path,
             },
+        ],
+    },
+    {
+        label: <FormattedMessage defaultMessage="Quản lý hệ thống" />,
+        key: 'quan-ly-he-thong',
+
+        // permission: apiConfig.category.getList.baseURL,
+        children: [
+            {
+                label: <FormattedMessage defaultMessage="Cài đặt" />,
+                key: 'setting',
+                path: routes.settingsPage.path,
+
+            },
+
         ],
     },
 ];

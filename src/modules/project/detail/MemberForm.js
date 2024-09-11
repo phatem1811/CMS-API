@@ -92,23 +92,25 @@ const MemberForm = ({ formId, actions, dataDetail, onSubmit, setIsChangedFormVal
     };
 
     const handleSubmit = (values) => {
-      
+
+        console.log("check values", values.schedule);
         const scheduleJson = scheduleData.reduce((acc, day) => {
             const timeRanges = day.times
-                .filter(time => time.startTime && time.endTime) 
-                .map(time => `${dayjs(time.startTime).format(format)}-${dayjs(time.endTime).format(format)}`)
-                .join('|'); 
-            return { ...acc, [day.key]: timeRanges }; 
+                .filter(time => time.startTime && time.endTime)
+                .map(time => `${dayjs(time.startTime, format).format(format)}-${dayjs(time.endTime, format).format(format)}`)
+                .join('|');
+            return { ...acc, [day.key]: timeRanges };
         }, {});
         const scheduleJsonString = JSON.stringify(scheduleJson);
-        console.log("check data schedule",scheduleJsonString);
+        console.log("check data schedule", scheduleJsonString);
         const dataupdate = {
             ...values,
             schedule: scheduleJsonString,
             status: 1,
+            projectId: projectId,
             isPaid: values.isPaid,
         };
-        console.log("check data update",dataupdate);
+        console.log("check data update", dataupdate);
         return mixinFuncs.handleSubmit(dataupdate);
     };
 
@@ -170,6 +172,7 @@ const MemberForm = ({ formId, actions, dataDetail, onSubmit, setIsChangedFormVal
                 updatedTimes[index][type] = timeString;
                 return { ...item, times: updatedTimes };
             }
+            setIsChangedFormValues(true);
             return item;
         });
         setScheduleData(updatedData);
@@ -271,7 +274,7 @@ const MemberForm = ({ formId, actions, dataDetail, onSubmit, setIsChangedFormVal
                             name={['developerId']}
                             apiConfig={apiConfig.developer.autocomplete}
                             mappingOptions={(item) => ({ value: item.id, label: item.account?.fullName })}
-                            initialSearchParams={{ ignoreMemberProject: 'false', projectId: projectId }}
+                            initialSearchParams={{ ignoreMemberProject: 'true', projectId: projectId }}
                             searchParams={(text) => ({ name: text })}
                             required
                             disabled={isEditing}
@@ -284,7 +287,7 @@ const MemberForm = ({ formId, actions, dataDetail, onSubmit, setIsChangedFormVal
                             name={['projectRoleId']}
                             apiConfig={apiConfig.projectRole.autocomplete}
                             mappingOptions={(item) => ({ value: item.id, label: item.projectRoleName })}
-                            searchParams={(text) => ({ name: text })}               
+                            searchParams={(text) => ({ name: text })}
                             required
                             disabled={isEditing}
                         />
@@ -297,7 +300,7 @@ const MemberForm = ({ formId, actions, dataDetail, onSubmit, setIsChangedFormVal
                         label={<FormattedMessage defaultMessage="Được trả lương" />}
                         name="isPaid"
                         valuePropName="checked"
-                        
+
                     >
                         <Checkbox onChange={handleCheckboxChange} />
                     </Form.Item>
@@ -306,9 +309,9 @@ const MemberForm = ({ formId, actions, dataDetail, onSubmit, setIsChangedFormVal
                 <Table
                     columns={columns}
                     dataSource={scheduleData}
+                    pagination={false}
 
                 />
-
                 <div className="footer-card-form">{actions}</div>
             </Card>
         </BaseForm>

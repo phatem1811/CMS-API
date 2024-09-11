@@ -26,6 +26,7 @@ export default {
         auth: true,
         component: ProjectDetailListPage,
         permission: [apiConfig.project.create.baseURL, apiConfig.project.update.baseURL],
+        keyActiveTab: 'activeTab',
     },
     StorySaveBase: {
         path: '/story/task/:id',
