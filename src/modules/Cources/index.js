@@ -95,7 +95,7 @@ const CourseListPage = () => {
 
     });
 
-
+    console.log("check dât", data);
 
     const columns = [
         {

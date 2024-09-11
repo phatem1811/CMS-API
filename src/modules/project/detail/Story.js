@@ -33,7 +33,7 @@ import { useSearchParams } from 'react-router-dom';
 import { DatePicker } from 'antd';
 dayjs.extend(customParseFormat);
 import {
-    STATE_PROJECT_CREATE, STATE_PROJECT_RUNNING, STATE_PROJECT_DONE, statusOptions,
+    STATE_PROJECT_CREATE, STATE_PROJECT_RUNNING, STATE_PROJECT_DONE, statusOptions, stateProjectOptions,
     STATE_PROJECT_CANCEL, STATE_PROJECT_FAILED, projectStateMessage } from '@constants/masterData';
 import { size } from 'lodash';
 const message = defineMessages({
@@ -44,6 +44,7 @@ const message = defineMessages({
 const StoryListPage = () => {
     const translate = useTranslate();
     const statusValues = translate.formatKeys(statusOptions, ['label']);
+    const stateValues = translate.formatKeys(stateProjectOptions, ['label']);
     const [isOpen, { open, close }] = useDisclosure();
     const location = useLocation();
     const { pathname: pagePath } = useLocation();
@@ -71,17 +72,14 @@ const StoryListPage = () => {
     });
 
 
-
-    console.log("check projectId", datadeveloper);
-
     const [form] = useForm();
     const navigate = useNavigate();
     const { formatMessage } = useIntl();
     const stateOptionValues = [
-        { value: STATE_PROJECT_CREATE, label: formatMessage(projectStateMessage.create) },
-        { value: STATE_PROJECT_RUNNING, label: formatMessage(projectStateMessage.running) },
-        { value: STATE_PROJECT_DONE, label: formatMessage(projectStateMessage.done) },
-        { value: STATE_PROJECT_CANCEL, label: formatMessage(projectStateMessage.cancel) },
+        { value: STATE_PROJECT_CREATE, label: formatMessage(projectStateMessage.create), color:'yellow' },
+        { value: STATE_PROJECT_RUNNING, label: formatMessage(projectStateMessage.running) ,  color: 'blue' },
+        { value: STATE_PROJECT_DONE, label: formatMessage(projectStateMessage.done), color: '#CC0000' },
+        { value: STATE_PROJECT_CANCEL, label: formatMessage(projectStateMessage.cancel),  color: '#CC0000' },
 
     ];
 
@@ -137,6 +135,18 @@ const StoryListPage = () => {
             },
         },
 
+        // {
+        //     title: <FormattedMessage defaultMessage="Tình trạng" />,
+        //     width: 80,
+        //     dataIndex: 'state',
+        //     render: (state) => {
+        //         const stateOption = stateOptionValues.find((option) => option.value === state);
+        //         return stateOption ? ( <Tag color={stateOption.color}>{translate.formatMessage(stateOption.label)}</Tag> ) : (
+        //             <FormattedMessage defaultMessage="Không xác định" />
+        //         );
+        //     },
+        // },
+
         {
             title: <FormattedMessage defaultMessage="Tình trạng" />,
             width: 180,
@@ -145,7 +155,16 @@ const StoryListPage = () => {
 
                 const stateOption = stateOptionValues.find(option => option.value === state);
                 // 
-                return stateOption ? stateOption.label : <FormattedMessage defaultMessage="Không xác định" />;
+                if (stateOption) {
+                    // Sử dụng Tag để hiển thị trạng thái
+                    return (
+                        <Tag color={stateOption.color || 'default'}>
+                            {stateOption.label}
+                        </Tag>
+                    );
+                }
+    
+                return <FormattedMessage defaultMessage="Không xác định" />;
             },
         },
         mixinFuncs.renderActionColumn(
@@ -156,6 +175,14 @@ const StoryListPage = () => {
             { width: '130px' },
         ),
     ];
+    const handleSearch = (values) => {
+        const params = new URLSearchParams(location.search);
+        params.set('developerId', values.developerId || '');
+        params.set('status', values.status || '');
+        navigate({ search: params.toString() });
+    };
+
+
 
     const searchFields = [
         {
@@ -179,7 +206,7 @@ const StoryListPage = () => {
     return (
         <  >
             <ListPage title={'Conference and Event Management System'}
-                searchForm={mixinFuncs.renderSearchForm({ fields: searchFields, initialValues: queryFilter })}
+                searchForm={mixinFuncs.renderSearchForm({ fields: searchFields, initialValues: queryFilter, onSearch: handleSearch })}
                 actionBar={mixinFuncs.renderActionBar()}
                 baseTable={
                     <BaseTable

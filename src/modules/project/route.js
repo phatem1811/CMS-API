@@ -3,6 +3,7 @@ import apiConfig from '@constants/apiConfig';
 import ProjectSaveBase from "./projectSaveBase";
 import ProjectDetailListPage from "./detail/index";
 import StorySaveBase from "./detail/StorySaveBase";
+import MemberSaveBase from "./detail/MemberSaveBase";
 export default {
     ProjectListPage: {
         path: '/project',
@@ -28,9 +29,16 @@ export default {
     },
     StorySaveBase: {
         path: '/story/task/:id',
-        title: 'Project List Page',
+        title: 'Project Story SavePage',
         auth: true,
         component: StorySaveBase,
         permission: [apiConfig.story.create.baseURL, apiConfig.story.update.baseURL],
+    },
+    MemberSaveBase: {
+        path: '/project/member/:id',
+        title: 'Project Member SavePage',
+        auth: true,
+        component: MemberSaveBase,
+        permission: [apiConfig.memberProject.create.baseURL, apiConfig.memberProject.update.baseURL],
     },
 };
