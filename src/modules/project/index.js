@@ -90,8 +90,8 @@ const ProjectListPage = () => {
                     data: dataCreate,
                     onCompleted: (response) => {
 
-                        navigate(`/project`);
-                        // navigate(  routes.ProjectListPage.path);
+                        close();
+                        mixinFuncs.handleFetchList();
                     },
                     onError: (error) => {
                         console.error('Error creating task:', error);
@@ -111,10 +111,11 @@ const ProjectListPage = () => {
                     method: 'PUT',
                     data: dataUpdate,
                     onCompleted: (response) => {
+                        console.log("update thanhcong");
+                        close();
+                        mixinFuncs.handleFetchList();
 
-                        return `/project`;
-
-                        // navigate(  routes.ProjectListPage.path);
+                        
 
                     },
                     onError: (error) => {

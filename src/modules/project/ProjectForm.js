@@ -27,7 +27,9 @@ import {
 dayjs.extend(customParseFormat);
 
 const ProjectForm = ({ formId, actions, dataDetail, onSubmit, setIsChangedFormValues, isEditing }) => {
-    const { execute: executeUpFile } = useFetch(apiConfig.file.upload);
+    const { execute: executeUpFile } = useFetch(apiConfig.file.upload, {
+        immediate: false,
+    });
     const [avatarUrl, setAvatarUrl] = useState(null);
     const [bannerUrl, setBannerUrl] = useState(null);
 
@@ -43,7 +45,14 @@ const ProjectForm = ({ formId, actions, dataDetail, onSubmit, setIsChangedFormVa
         { value: STATE_PROJECT_FAILED, label: formatMessage(projectStateMessage.failed) },
 
     ];
+    const [startDate, setStartDate] = useState(null);
 
+    // Hàm xử lý khi thay đổi ngày
+    const handleDateChange = (date, dateString) => {
+        setStartDate(date);
+        date = formatDateString(date, DEFAULT_FORMAT);
+
+    };
     const { form, mixinFuncs, onValuesChange } = useBasicForm({
         onSubmit,
         setIsChangedFormValues,
@@ -56,7 +65,9 @@ const ProjectForm = ({ formId, actions, dataDetail, onSubmit, setIsChangedFormVa
                 file: file,
             },
             onCompleted: (response) => {
+
                 if (response.result === true) {
+
                     onSuccess();
                     setImageUrl(response.data.filePath);
                     setIsChangedFormValues(true);
@@ -97,15 +108,13 @@ const ProjectForm = ({ formId, actions, dataDetail, onSubmit, setIsChangedFormVa
         <BaseForm id={formId} onFinish={handleSubmit} form={form} onValuesChange={onValuesChange}>
             <Card className="card-form" bordered={false}>
                 <Row gutter={10}>
-                    <Col span={12}>
-                        <CropImageField
-                            label={<FormattedMessage defaultMessage="Avatar" />}
-                            name="avatar"
-                            imageUrl={avatarUrl && `${AppConstants.contentRootUrl}${avatarUrl}`}
-                            aspect={1 / 1}
-                            uploadFile={(...args) => uploadFile(...args, setAvatarUrl)}
-                        />
-                    </Col>
+                    <CropImageField
+                        label={<FormattedMessage defaultMessage="Avatar" />}
+                        name="avatar"
+                        imageUrl={avatarUrl && `${AppConstants.contentRootUrl}${avatarUrl}`}
+                        aspect={1 / 1}
+                        uploadFile={(...args) => uploadFile(...args, setAvatarUrl)}
+                    />
 
                 </Row>
                 <Row gutter={10}>
@@ -121,6 +130,7 @@ const ProjectForm = ({ formId, actions, dataDetail, onSubmit, setIsChangedFormVa
                             label={<FormattedMessage defaultMessage="Ngày bắt đầu" />}
                             placeholder="Ngày bắt đầu"
                             format={DATE_FORMAT_DISPLAY}
+                            onChange={handleDateChange}
                             style={{ width: '100%' }}
                             rules={[
                                 {
@@ -143,6 +153,9 @@ const ProjectForm = ({ formId, actions, dataDetail, onSubmit, setIsChangedFormVa
                                     message: 'Vui lòng chọn ngày kết thúc',
                                 },
                             ]}
+                            disabledDate={(current) => 
+                                startDate ? current && current <= startDate.startOf('day') : false
+                            }
                         />
                     </Col>
                 </Row>

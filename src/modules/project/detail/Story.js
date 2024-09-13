@@ -3,28 +3,21 @@ import apiConfig from '@constants/apiConfig';
 import useListBase from '@hooks/useListBase';
 import { Button, Modal, Tag } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { UserOutlined } from '@ant-design/icons';
-import AvatarField from '@components/common/form/AvatarField';
 import ListPage from '@components/common/layout/ListPage';
-import PageWrapper from '@components/common/layout/PageWrapper';
 import { AppConstants, categoryKind, DEFAULT_FORMAT, DATE_FORMAT_DISPLAY, DEFAULT_TABLE_ITEM_SIZE } from '@constants';
 import { FieldTypes } from '@constants/formConfig';
-import DatePickerField from '@components/common/form/DatePickerField';
-import { BaseForm } from '@components/common/form/BaseForm';
+
 import useTranslate from '@hooks/useTranslate';
-import { commonMessage } from '@locales/intl';
+
 import { convertUtcToLocalTime } from '@utils';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useNavigate, useLocation, useParams } from "react-router-dom";
-import { DollarTwoTone } from '@ant-design/icons';
-import { formatDateString } from '@utils/index';
 import { useIntl } from 'react-intl';
 import { useForm } from 'antd/es/form/Form';
 import useFetch from '@hooks/useFetch';
 import useNotification from '@hooks/useNotification';
 import useDisclosure from '@hooks/useDisclosure';
-import moment from 'moment';
-import { BaseTooltip } from '@components/common/form/BaseTooltip';
+
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useSearchParams } from 'react-router-dom';
@@ -135,18 +128,6 @@ const StoryListPage = () => {
             },
         },
 
-        // {
-        //     title: <FormattedMessage defaultMessage="Tình trạng" />,
-        //     width: 80,
-        //     dataIndex: 'state',
-        //     render: (state) => {
-        //         const stateOption = stateOptionValues.find((option) => option.value === state);
-        //         return stateOption ? ( <Tag color={stateOption.color}>{translate.formatMessage(stateOption.label)}</Tag> ) : (
-        //             <FormattedMessage defaultMessage="Không xác định" />
-        //         );
-        //     },
-        // },
-
         {
             title: <FormattedMessage defaultMessage="Tình trạng" />,
             width: 180,
@@ -182,6 +163,19 @@ const StoryListPage = () => {
         navigate({ search: params.toString() });
     };
 
+    const handleReset = (values) => {
+        const params = new URLSearchParams(location.search);
+      
+        if (params.has('developerId')) {
+            params.delete('developerId');
+        }
+        if (params.has('status')) {
+            params.delete('status');
+        }
+        navigate({ search: params.toString() });
+    };
+
+
 
 
     const searchFields = [
@@ -206,7 +200,7 @@ const StoryListPage = () => {
     return (
         <  >
             <ListPage title={'Conference and Event Management System'}
-                searchForm={mixinFuncs.renderSearchForm({ fields: searchFields, initialValues: queryFilter, onSearch: handleSearch })}
+                searchForm={mixinFuncs.renderSearchForm({ fields: searchFields, initialValues: queryFilter, onSearch: handleSearch, onReset: handleReset })}
                 actionBar={mixinFuncs.renderActionBar()}
                 baseTable={
                     <BaseTable

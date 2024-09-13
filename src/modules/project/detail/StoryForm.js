@@ -105,7 +105,7 @@ const StoryForm = ({ formId, actions, dataDetail, onSubmit, setIsChangedFormValu
     }, [isEditing]);
 
     useEffect(() => {
-        // dataDetail.dateComplete = dataDetail.dateComplete && dayjs(dataDetail.dateComplete, DEFAULT_FORMAT);
+        dataDetail.dateComplete = dataDetail.dateComplete && dayjs(dataDetail.dateComplete, DEFAULT_FORMAT);
         form.setFieldsValue({
             ...dataDetail,
             developerId: dataDetail?.developerInfo?.account?.id,

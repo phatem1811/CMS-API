@@ -113,7 +113,7 @@ const apiConfig = {
     },
     file: {
         upload: {
-            path: `${AppConstants.mediaRootUrl}api/file/upload`,
+            path: `${AppConstants.mediaRootUrl}v1/file/upload`,
             method: 'POST',
             headers: multipartFormHeader,
         },
@@ -399,9 +399,27 @@ const apiConfig = {
             headers: baseHeader,
             isRequiredTenantId: true,
         },
+        update: {
+            baseURL: `${apiTenantUrl}v1/subject/update`,
+            method: 'PUT',
+            headers: baseHeader,
+            isRequiredTenantId: true,
+        },
         autocomplete: {
             baseURL: `${apiTenantUrl}v1/subject/auto-complete`,
             method: 'GET',
+            headers: baseHeader,
+            isRequiredTenantId: true,
+        },
+        create: {
+            baseURL: `${apiTenantUrl}v1/subject/create`,
+            method: 'POST',
+            headers: baseHeader,
+            isRequiredTenantId: true,
+        },
+        delete: {
+            baseURL: `${apiTenantUrl}v1/subject/delete/:id`,
+            method: 'DELETE',
             headers: baseHeader,
             isRequiredTenantId: true,
         },
@@ -463,6 +481,48 @@ const apiConfig = {
         },
     },
     lecture: {
+        getList: {
+            baseURL: `${apiTenantUrl}v1/lecture/list`,
+            method: 'GET',
+            headers: baseHeader,
+            isRequiredTenantId: true,
+        },
+        getById: {
+            baseURL: `${apiTenantUrl}v1/lecture/get/:id`,
+            method: 'GET',
+            headers: baseHeader,
+            isRequiredTenantId: true,
+        },
+        create: {
+            baseURL: `${apiTenantUrl}v1/lecture/create`,
+            method: 'POST',
+            headers: baseHeader,
+            isRequiredTenantId: true,
+        },
+        update: {
+            baseURL: `${apiTenantUrl}v1/lecture/update`,
+            method: 'PUT',
+            headers: baseHeader,
+            isRequiredTenantId: true,
+        },
+        updateSort: {
+            baseURL: `${apiTenantUrl}v1/lecture/update-sort`,
+            method: 'PUT',
+            headers: baseHeader,
+            isRequiredTenantId: true,
+        },
+        delete: {
+            baseURL: `${apiTenantUrl}v1/lecture/delete/:id`,
+            method: 'DELETE',
+            headers: baseHeader,
+            isRequiredTenantId: true,
+        },
+        autocomplete: {
+            baseURL: `${apiTenantUrl}v1/lecture/auto-complete`,
+            method: 'GET',
+            headers: baseHeader,
+            isRequiredTenantId: true,
+        },
         getBySubject: {
             baseURL: `${apiTenantUrl}v1/lecture/get-by-subject/:id`,
             method: 'GET',
