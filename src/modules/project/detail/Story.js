@@ -114,7 +114,20 @@ const StoryListPage = () => {
 
     const columns = [
 
-        { title: <FormattedMessage defaultMessage="Tên story" />, dataIndex: 'storyName', width: 300 },
+        {
+            title: <FormattedMessage defaultMessage="Tên story" />,
+            dataIndex: 'storyName',
+            width: 300,
+            render: (name, record) => {
+                const params = new URLSearchParams(location.search);
+                const projectId = params.get('projectId');
+                const projectName = encodeURIComponent(params.get('projectName'));
+                const storyId = record.id;
+                const storyName = encodeURIComponent(name);
+                const url = `/project/task?projectId=${projectId}&storyId=${storyId}&storyName=${storyName}&active=true&projectName=${projectName}`;
+                return <a onClick={() => navigate(url)}>{name}</a>;
+            },
+        },
         { title: <FormattedMessage defaultMessage="Người thực hiện" />, dataIndex: ['developerInfo', 'account', 'fullName'] },
 
         {

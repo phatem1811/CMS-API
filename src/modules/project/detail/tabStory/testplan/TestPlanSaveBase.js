@@ -5,26 +5,32 @@ import useFetch from '@hooks/useFetch';
 import useSaveBase from '@hooks/useSaveBase';
 import React, { useEffect } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
-import routes from './route';
+import TestPlanForm from './TestPlanForm';
+import routes from '../route';
 import useTranslate from '@hooks/useTranslate';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
-import SubjectForm from './SubjectForm';
-
+import route from '@modules/project/route';
 const message = defineMessages({
-    objectName: 'Môn học',
+    objectName: 'Test plan',
 });
 
-const SubjectSaveBase = () => {
+const TestPlanSaveBase = () => {
     const translate = useTranslate();
     const location = useLocation();
+    const queryString = location.search;
+    const queryParams = new URLSearchParams(location.search);
+    const projectName = queryParams.get('projectName');
+    const projectId = queryParams.get('projectId');
+    const storyName = queryParams.get('storyName');
+    const storyId = queryParams.get('storyId');
     const { detail, mixinFuncs, loading, setIsChangedFormValues, isEditing, title } = useSaveBase({
         apiConfig: {
-            getById: apiConfig.subject.getById,
-            create: apiConfig.subject.create,
-            update: apiConfig.subject.update,
+            getById: apiConfig.testPlan.getById,
+            create: apiConfig.testPlan.create,
+            update: apiConfig.testPlan.update,
         },
         options: {
-            getListUrl: routes.SubjectListPage.path,
+            getListUrl: routes.StoryTabs.path,
             objectName: translate.formatMessage(message.objectName),
         },
         override: (funcs) => {
@@ -37,18 +43,26 @@ const SubjectSaveBase = () => {
 
         },
     });
+
     return (
         <PageWrapper
 
             routes={[
-                { breadcrumbName: 'Môn học', path: routes.SubjectListPage.path },
+                { breadcrumbName: 'Dự án', path : route.ProjectListPage.path },
+                {
+                    breadcrumbName: projectName,
+                    path: `/project/project-tab?projectId=${projectId}&projectName=${projectName}&active=true`,
+                },
+                {
+                    breadcrumbName: `Story (${storyName})`,
+                    path: `/project/task?projectId=${projectId}&storyId=${storyId}&storyName=${storyName}&active=true&projectName=${projectName}`,
+                },
                 { breadcrumbName: title },
             ]}
             title={title}
         >
-            <SubjectForm
+            <TestPlanForm
                 setIsChangedFormValues={setIsChangedFormValues}
-
                 dataDetail={detail ? detail : {}}
                 formId={mixinFuncs.getFormId()}
                 isEditing={isEditing}
@@ -59,4 +73,4 @@ const SubjectSaveBase = () => {
     );
 };
 
-export default SubjectSaveBase;
+export default TestPlanSaveBase;

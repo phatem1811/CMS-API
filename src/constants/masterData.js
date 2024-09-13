@@ -1,10 +1,19 @@
-import { STATUS_ACTIVE, STATUS_INACTIVE, STATUS_PENDING,PROVINCE_KIND,DISTRICT_KIND,VILLAGE_KIND } from '@constants';
+import { STATUS_ACTIVE, STATUS_INACTIVE, STATUS_PENDING,PROVINCE_KIND,DISTRICT_KIND,VILLAGE_KIND,TASK_KIND_FEATURE, TASK_KIND_BUG, TASK_KIND_TESTCASE } from '@constants';
 import { defineMessages } from 'react-intl';
 import {
     nationKindMessage,
     actionMessage,
     
 } from './intl';
+import BugImage from '@assets/images/bug.jpg';
+import FeatureImage from '@assets/images/feature.jpg';
+import TestCase from '@assets/images/testcase.jpg'; 
+
+export const taskKindMessage = defineMessages({
+    feature: 'Tính năng',
+    bug: 'Bug',
+    testCase: 'Test Case',
+});
 
 const commonMessage = defineMessages({
     statusActive: 'Active',
@@ -113,7 +122,11 @@ export const kindPost = [
     },
    
 ];
-
+export const kindTaskOptions = [
+    { value: TASK_KIND_FEATURE, label: taskKindMessage.feature, imageUrl: FeatureImage },
+    { value: TASK_KIND_BUG, label: taskKindMessage.bug, imageUrl: BugImage },
+    { value: TASK_KIND_TESTCASE, label: taskKindMessage.testCase, imageUrl: TestCase },
+];
 
 export const settingGroups = {
     GENERAL: 'general',
