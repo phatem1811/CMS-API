@@ -14,6 +14,11 @@ export const navMenuConfig = [
         permission: apiConfig.courses.getList.baseURL,
         children: [
             {
+                label: <FormattedMessage defaultMessage="Quản lí sinh viên" />,
+                key: 'Student',
+                path: routes.StudentListPage.path,
+            },
+            {
                 label: <FormattedMessage defaultMessage="Khóa học" />,
                 key: 'course',
                 path: routes.CourseListPage.path,
@@ -23,6 +28,7 @@ export const navMenuConfig = [
                 key: 'subject',
                 path: routes.SubjectListPage.path,
             },
+           
         ],
     },
     {
@@ -31,6 +37,11 @@ export const navMenuConfig = [
         key: 'quan-ly-du-an',
         permission: apiConfig.courses.getList.baseURL,
         children: [
+            {
+                label: <FormattedMessage defaultMessage="Quản lí lập trình viên" />,
+                key: 'developer',
+                path: routes.DeveloperListPage.path,
+            },
             {
                 label: <FormattedMessage defaultMessage="Dự án" />,
                 key: 'project',

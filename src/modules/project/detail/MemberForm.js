@@ -132,7 +132,7 @@ const MemberForm = ({ formId, actions, dataDetail, onSubmit, setIsChangedFormVal
         });
 
         const schedule = dataDetail.schedule ? JSON.parse(dataDetail.schedule) : {};
-        const updatedScheduleData = DAYS_OF_WEEK.map((day) => {
+        const getSchedule = DAYS_OF_WEEK.map((day) => {
             if (schedule[day.key]) {
                 const timeFrames = schedule[day.key].split('|').map((range) => {
                     const [startTime, endTime] = range.split('-').map((time) => dayjs(time, format));
@@ -161,7 +161,7 @@ const MemberForm = ({ formId, actions, dataDetail, onSubmit, setIsChangedFormVal
             };
         });
 
-        setScheduleData(updatedScheduleData);
+        setScheduleData(getSchedule);
 
     }, [dataDetail]);
 
@@ -233,7 +233,7 @@ const MemberForm = ({ formId, actions, dataDetail, onSubmit, setIsChangedFormVal
             render: (text, record) => (
                 <>
                     <TimePicker
-                        format={format}
+                        format={format}TimePicker
                         value={record.times[2].startTime ? dayjs(record.times[2].startTime, format) : null}
                         onChange={(time, timeString) => handleTimeChange(time, timeString, record, 2, 'startTime')}
                         placeholder="Start Time"

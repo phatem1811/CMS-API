@@ -155,9 +155,10 @@ const apiConfig = {
             headers: baseHeader,
         },
         autocomplete: {
-            baseURL: `${apiUrl}api/category/auto-complete`,
+            baseURL: `${apiTenantUrl}v1/category/auto-complete`,
             method: 'GET',
             headers: baseHeader,
+            isRequiredTenantId: true,
         },
     },
     languages: {
@@ -426,6 +427,36 @@ const apiConfig = {
     },
 
     developer: {
+        getList: {
+            baseURL: `${apiTenantUrl}v1/developer/list`,
+            method: 'GET',
+            headers: baseHeader,
+            isRequiredTenantId: true,
+        },
+        update: {
+            baseURL: `${apiTenantUrl}v1/developer/update`,
+            method: 'PUT',
+            headers: baseHeader,
+            isRequiredTenantId: true,
+        },
+        delete: {
+            baseURL: `${apiTenantUrl}v1/developer/delete/:id`,
+            method: 'DELETE',
+            headers: baseHeader,
+            isRequiredTenantId: true,
+        },
+        getById: {
+            baseURL: `${apiTenantUrl}v1/developer/get/:id`,
+            method: 'GET',
+            headers: baseHeader,
+            isRequiredTenantId: true,
+        },
+        create: {
+            baseURL: `${apiTenantUrl}v1/developer/create`,
+            method: 'POST',
+            headers: baseHeader,
+            isRequiredTenantId: true,
+        },
         autocomplete: {
             baseURL: `${apiTenantUrl}v1/developer/auto-complete`,
             method: 'GET',
@@ -467,14 +498,6 @@ const apiConfig = {
         },
         coursetask: {
             baseURL: `${apiTenantUrl}v1/task/course-task/:id`,
-            method: 'GET',
-            headers: baseHeader,
-            isRequiredTenantId: true,
-        },
-    },
-    student: {
-        autocomplete: {
-            baseURL: `${apiTenantUrl}v1/student/auto-complete`,
             method: 'GET',
             headers: baseHeader,
             isRequiredTenantId: true,
@@ -778,6 +801,44 @@ const apiConfig = {
     documentTemplate: {
         getList: {
             baseURL: `${apiTenantUrl}v1/document-template/list`,
+            method: 'GET',
+            headers: baseHeader,
+            isRequiredTenantId: true,
+        },
+    },
+    student: {
+        getList: {
+            baseURL: `${apiTenantUrl}v1/student/list`,
+            method: 'GET',
+            headers: baseHeader,
+            isRequiredTenantId: true,
+        },
+        update: {
+            baseURL: `${apiTenantUrl}v1/student/update`,
+            method: 'PUT',
+            headers: baseHeader,
+            isRequiredTenantId: true,
+        },
+        delete: {
+            baseURL: `${apiTenantUrl}v1/student/delete/:id`,
+            method: 'DELETE',
+            headers: baseHeader,
+            isRequiredTenantId: true,
+        },
+        getById: {
+            baseURL: `${apiTenantUrl}v1/student/get/:id`,
+            method: 'GET',
+            headers: baseHeader,
+            isRequiredTenantId: true,
+        },
+        create: {
+            baseURL: `${apiTenantUrl}v1/student/create`,
+            method: 'POST',
+            headers: baseHeader,
+            isRequiredTenantId: true,
+        },
+        autocomplete: {
+            baseURL: `${apiTenantUrl}v1/student/auto-complete`,
             method: 'GET',
             headers: baseHeader,
             isRequiredTenantId: true,
