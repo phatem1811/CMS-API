@@ -1,36 +1,36 @@
 import BaseTable from '@components/common/table/BaseTable';
 import apiConfig from '@constants/apiConfig';
 import useListBase from '@hooks/useListBase';
-import { Tooltip  } from 'antd';
+import { Button, Modal, Tag, Tooltip } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { UserOutlined } from '@ant-design/icons';
-import AvatarField from '@components/common/form/AvatarField';
+import { PlusSquareOutlined } from '@ant-design/icons';
 import ListPage from '@components/common/layout/ListPage';
 import PageWrapper from '@components/common/layout/PageWrapper';
-import { AppConstants, categoryKind, DEFAULT_FORMAT, DEFAULT_TABLE_ITEM_SIZE } from '@constants';
-import { FieldTypes } from '@constants/formConfig';
-import { statusOptions } from '@constants/masterData';
+import { DEFAULT_TABLE_ITEM_SIZE } from '@constants';
+import { stateResgistration } from '@constants/masterData';
 import useTranslate from '@hooks/useTranslate';
-import { commonMessage } from '@locales/intl';
-import DatePickerField from '@components/common/form/DatePickerField';
-import { convertUtcToLocalTime } from '@utils';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { FieldTimeOutlined , BulbOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
-import { Button } from 'antd';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { FieldTypes } from '@constants/formConfig';
+import routes from '../route';
 
 const message = defineMessages({
-    objectName: 'Lập trình viên',
-
+    objectName: 'Đăng kí khóa học',
 });
 
-const DeveloperListPage = () => {
+const CourseStudent = () => {
     const translate = useTranslate();
-    const statusValues = translate.formatKeys(statusOptions, ['label']);
     const navigate = useNavigate();
 
+    const location = useLocation();
+    const stateValues = translate.formatKeys(stateResgistration, ['label']);
+
+    const queryParams = new URLSearchParams(location.search);
+    const studentId = queryParams.get('studentId');
+    const studentName = queryParams.get('studentName');
+
     const { data, mixinFuncs, queryFilter, loading, pagination } = useListBase({
-        apiConfig: apiConfig.developer,
+        apiConfig: apiConfig.registration,
         options: {
             pageSize: DEFAULT_TABLE_ITEM_SIZE,
             objectName: translate.formatMessage(message.objectName),
@@ -39,115 +39,74 @@ const DeveloperListPage = () => {
             funcs.mappingData = (response) => {
                 if (response.result === true) {
                     return {
-                        data: response.data.content,
+                        data: response.data.content.map((item) => ({
+                            ...item,
+                            registrationId: item.id,
+                            courseName: item.courseName,
+                            courseState: item.state,
+                        })),
                         total: response.data.totalElements,
                     };
                 }
             };
             funcs.additionalActionColumnButtons = () => {
                 return {
-                    project: (record) => {
-                       
-                        const { id, name } = record;
+                    registration: (record) => {
+                        const { registrationId, courseName, courseState } = record;
                         return (
                             <Button
                                 type="link"
                                 style={{ padding: 0 }}
                                 onClick={() => {
                                     navigate(
-                                        `/developer/project?developerId=${id}&developerName=${encodeURIComponent(name)}`,
+                                        `/student/registration-project?studentId=${studentId}&studentName=${encodeURIComponent(
+                                            studentName,
+                                        )}&registrationId=${registrationId}&courseName=${encodeURIComponent(
+                                            courseName,
+                                        )}&courseState=${courseState}`,
                                     );
                                 }}
                             >
-                                <BulbOutlined />
+                                <PlusSquareOutlined />
                             </Button>
                         );
                     },
                 };
             };
-
-            funcs.additionalActionColumnButtons = () => {
-
-                return {
-                    dayOff: (record) => {
-                        const { id, accountDto } = record;
-                        const fullName = accountDto?.fullName;
-                        console.log("check name", fullName);
-                        return (
-                            <Button
-                                type="link"
-                                style={{ padding: 0 }}
-                                onClick={() => {
-                                    navigate(
-                                        `/developer/day-off-log?developerId=${id}&developerName=${encodeURIComponent(fullName)}`,
-                                    );
-                                }}
-                            >
-                                <FieldTimeOutlined />
-                            </Button>
-                        );
-                    },
-                };
-            };
-
         },
-        
     });
 
-    const formatMoney = (amount) => {
-        return `${amount.toFixed(0)} $`;
-    };
-
     const columns = [
-
         {
-            title: '#',
-            dataIndex: 'index',
+            title: 'Tên khoá học',
+            dataIndex: 'courseName',
+            width: 150,
+        },
+        {
+            title: <FormattedMessage defaultMessage="Tổng dự án" />,
+            dataIndex: 'totalProject',
             align: 'center',
-            width: 40,
-            render: (text, record, index) => {
-                const { current, pageSize } = pagination;
-                return (current - 1) * pageSize + index + 1;
+            width: 120,
+            render: (totalProject, record) => {
+                const { minusTrainingProjectMoney } = record;
+                return (
+                    <>
+                        <div>{`${totalProject}/3`}</div>
+                    </>
+                );
             },
         },
         {
-            title: '#',
-            dataIndex: ['accountDto', 'avatar'],
-            align: 'center',
-            width: 70,
-            render: (avatar) => (
-                <AvatarField
-                    size="large"
-                    icon={<UserOutlined />}
-                    src={avatar ? `${AppConstants.contentRootUrl}${avatar}` : null}
-                />
-            ),
-        },
-        { 
-            title: <FormattedMessage defaultMessage="Họ và tên" />,
-            dataIndex: ['accountDto', 'fullName'], 
+            title: <FormattedMessage defaultMessage="Tỉ lệ đào tạo" />,
+            dataIndex: 'Tốt',
+            width: 120,
+            // dataIndex: 'studentName',
         },
         {
-            title: <FormattedMessage defaultMessage="Vai trò" />,
-            dataIndex: ['developerRole', 'categoryName'],
-        },
-        {
-            title: <FormattedMessage defaultMessage="Lương cứng" />,
-            dataIndex: 'salary',
-            align: 'right',
-            render: (fee) => formatMoney(fee),
-        },
-        {
-            title: <FormattedMessage defaultMessage="Lương theo giờ	" />,
-            dataIndex: 'hourlySalary',
-            align: 'right',
-            render: (fee) => formatMoney(fee),
-        },
-        {
-            title: <FormattedMessage defaultMessage="Số điện thoại" />,
-            dataIndex: ['accountDto', 'phone'],
-            width: 200,
-            align: 'center',
+            title: <FormattedMessage defaultMessage="Tỉ lệ dự án" />,
+            dataIndex: 'Tốt',
+            width: 120,
+            // dataIndex: 'studentName',
         },
         {
             title: 'Lịch trình',
@@ -157,7 +116,7 @@ const DeveloperListPage = () => {
                 try {
                     parsedSchedule = JSON.parse(scheduleData);
                 } catch (e) {
-                    console.error('Error parsing schedule data:', e);
+            
                     return null;
                 }
 
@@ -180,6 +139,7 @@ const DeveloperListPage = () => {
                             const hasSchedule = dayKey && parsedSchedule[dayKey];
                             const scheduleTime = hasSchedule ? parsedSchedule[dayKey] : null;
                             const borderColor = isToday ? (hasSchedule ? 'blue' : 'red') : 'black';
+
                             return (
                                 <Tooltip key={index} title={scheduleTime || 'No schedule'} placement="top">
                                     <div
@@ -207,37 +167,60 @@ const DeveloperListPage = () => {
             },
         },
 
-        mixinFuncs.renderStatusColumn({ width: '90px' }),
+        {
+            title: <FormattedMessage defaultMessage="Trạng thái" />,
+            width: 180,
+            dataIndex: 'state',
+            align: 'center',
+            render: (state) => {
+                const stateOption = stateResgistration.find((option) => option.value === state);
+                return stateOption ? (
+                    <Tag color={stateOption.color}>{translate.formatMessage(stateOption.label)}</Tag>
+                ) : (
+                    <FormattedMessage  defaultMessage="Không xác định" />
+                );
+            },
+        },
         mixinFuncs.renderActionColumn(
             {
-                project : true,
-                dayOff : true, 
-                edit: true,
+                registration: true,
                 delete: true,
             },
-            { width: '130px', fixed: 'right' },
+            { width: '180px', fixed: 'right' },
         ),
     ];
 
     const searchFields = [
         {
-            key: 'name',
-            placeholder: translate.formatMessage(message.objectName),
-        },
-        {
-            key: 'status',
-            placeholder: translate.formatMessage(commonMessage.status),
+            key: 'state',
+            placeholder:'Trạng thái',
             type: FieldTypes.SELECT,
-            options: statusValues,
+            options: stateValues,
         },
     ];
 
+    const [searchValues, setSearchValues] = useState({});
+
+    const handleSearch = (values) => {
+        const params = new URLSearchParams(location.search);
+        params.set('state', values.state || '');
+        navigate({ search: params.toString() });
+    };
 
     return (
-        <PageWrapper routes={[{ breadcrumbName: translate.formatMessage(message.objectName) }]}   >
+        <PageWrapper
+            routes={[
+                { breadcrumbName: 'Học sinh', path: routes.StudentListPage.path },
+                { breadcrumbName: 'Khóa học' },
+            ]}
+        >
             <ListPage
-                searchForm={mixinFuncs.renderSearchForm({ fields: searchFields, initialValues: queryFilter })}
-                actionBar={mixinFuncs.renderActionBar()}
+                searchForm={mixinFuncs.renderSearchForm({ 
+                    fields: searchFields,
+                    initialValues: queryFilter, 
+                    onSearch: handleSearch,
+                })}
+                title={studentName}
                 baseTable={
                     <BaseTable
                         onChange={mixinFuncs.changePagination}
@@ -248,9 +231,8 @@ const DeveloperListPage = () => {
                     />
                 }
             />
-
         </PageWrapper>
     );
 };
 
-export default DeveloperListPage;
+export default CourseStudent;

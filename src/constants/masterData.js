@@ -1,4 +1,5 @@
-import { STATUS_ACTIVE, STATUS_INACTIVE, STATUS_PENDING,PROVINCE_KIND,DISTRICT_KIND,VILLAGE_KIND,TASK_KIND_FEATURE, TASK_KIND_BUG, TASK_KIND_TESTCASE } from '@constants';
+import { STATUS_ACTIVE, STATUS_INACTIVE, STATUS_PENDING,PROVINCE_KIND,DISTRICT_KIND,REGISTRATION_STATE_REGISTER,REGISTRATION_STATE_LEARNING,
+    REGISTRATION_STATE_FINISHED, REGISTRATION_STATE_CANCEL, VILLAGE_KIND,TASK_KIND_FEATURE, TASK_KIND_BUG, TASK_KIND_TESTCASE } from '@constants';
 import { defineMessages } from 'react-intl';
 import {
     nationKindMessage,
@@ -122,6 +123,24 @@ export const kindPost = [
     },
    
 ];
+
+export const stateRegistrationMessage = defineMessages({
+    register: 'Đăng ký',
+    learning: 'Đang học',
+    finished: 'Đã hoàn thành',
+    canceled: 'Đã huỷ',
+});
+
+export const stateResgistration = [
+    { value: REGISTRATION_STATE_REGISTER, label: stateRegistrationMessage.register, color: '#00A648' },
+    { value: REGISTRATION_STATE_LEARNING, label: stateRegistrationMessage.learning, color: 'blue' },
+    { value: REGISTRATION_STATE_FINISHED, label: stateRegistrationMessage.finished, color: '#CC0000' },
+    { value: REGISTRATION_STATE_CANCEL, label: stateRegistrationMessage.canceled, color: '#CC0000' },
+];
+
+
+
+
 export const kindTaskOptions = [
     { value: TASK_KIND_FEATURE, label: taskKindMessage.feature, imageUrl: FeatureImage },
     { value: TASK_KIND_BUG, label: taskKindMessage.bug, imageUrl: BugImage },

@@ -14,15 +14,16 @@ import useTranslate from '@hooks/useTranslate';
 import { commonMessage } from '@locales/intl';
 import { convertUtcToLocalTime } from '@utils';
 import { defineMessages, FormattedMessage } from 'react-intl';
-
+import { UserOutl, ContainerOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 const message = defineMessages({
     objectName: 'Học sinh',
-
 });
 
 const StudentListPage = () => {
     const translate = useTranslate();
     const statusValues = translate.formatKeys(statusOptions, ['label']);
+    const navigate = useNavigate();
 
     const { data, mixinFuncs, queryFilter, loading, pagination } = useListBase({
         apiConfig: apiConfig.student,
@@ -39,8 +40,29 @@ const StudentListPage = () => {
                     };
                 }
             };
+            funcs.additionalActionColumnButtons = () => {        
+                return {
+                    registration: (record) => {
+                        const { id, account } = record;
+                        const fullName = account?.fullName;
+                        
+                        return (
+                            <Button
+                                type="link"
+                                style={{ padding: 0 }}
+                                onClick={() => {
+                                    navigate(`/student/course?studentId=${id}&studentName=${encodeURIComponent(fullName)}` );
+                                }}
+                            >
+                                <ContainerOutlined />
+                            </Button>
+                        );
+                    },
+                };
+            };
         },
     });
+    
 
     const columns = [
 
@@ -86,7 +108,7 @@ const StudentListPage = () => {
         mixinFuncs.renderStatusColumn({ width: '90px' }),
         mixinFuncs.renderActionColumn(
             {
-
+                registration: mixinFuncs.hasPermission([apiConfig.registration.getById.baseURL]),
                 edit: true,
                 delete: true,
             },
@@ -99,7 +121,6 @@ const StudentListPage = () => {
             key: 'fullName',
             placeholder: 'Họ và Tên',
         },
-
         {
             key: 'status',
             placeholder: translate.formatMessage(commonMessage.status),
@@ -107,7 +128,6 @@ const StudentListPage = () => {
             options: statusValues,
         },
     ];
-
 
     return (
         <PageWrapper routes={[{ breadcrumbName: translate.formatMessage(message.objectName) }]}   >
