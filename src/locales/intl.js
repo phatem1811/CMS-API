@@ -61,4 +61,5 @@ export const commonMessage = defineMessages({
     timeZone: 'Timezone',
     money: 'Money',
     system: 'System',
+    content: 'Content',
 });

@@ -584,6 +584,12 @@ const apiConfig = {
             headers: baseHeader,
             isRequiredTenantId: true,
         },
+        autocomplete: {
+            baseURL: `${apiTenantUrl}v1/project/auto-complete`,
+            method: 'GET',
+            headers: baseHeader,
+            isRequiredTenantId: true,
+        },
     },
     registerSalary: {
         registerSalaryPeriodById: {

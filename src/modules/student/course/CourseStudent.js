@@ -206,6 +206,16 @@ const CourseStudent = () => {
         params.set('state', values.state || '');
         navigate({ search: params.toString() });
     };
+    const handleReset = (values) => {
+        const params = new URLSearchParams(location.search);
+      
+        if (params.has('state')) {
+            params.delete('state');
+        }
+   
+        navigate({ search: params.toString() });
+    };
+
 
     return (
         <PageWrapper
@@ -219,6 +229,7 @@ const CourseStudent = () => {
                     fields: searchFields,
                     initialValues: queryFilter, 
                     onSearch: handleSearch,
+                    onReset: handleReset,
                 })}
                 title={studentName}
                 baseTable={

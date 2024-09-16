@@ -14,6 +14,18 @@ import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import DatePickerField from '@components/common/form/DatePickerField';
 import routes from '../route';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { formatDateString } from '@utils/index';
+import { DATE_FORMAT_DISPLAY, DATE_FORMAT_VALUE } from '@constants/index';
+import { FieldTypes } from '@constants/formConfig';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+dayjs.extend(customParseFormat);
+
 const message = defineMessages({
     objectName: 'course',
 });
@@ -23,6 +35,9 @@ const DayoffListPage = () => {
     const navigate = useNavigate();
     const statusValues = translate.formatKeys(statusOptions, ['label']);
     const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const developerId = queryParams.get('developerId');
+
     const { pathname: pagePath } = useLocation();
     const queryString = location.search;
 
@@ -40,7 +55,15 @@ const DayoffListPage = () => {
                     };
                 }
             };
-         
+            funcs.getCreateLink = () => {
+                return `${pagePath}/create?developerId=${developerId}`;
+            };
+            
+            funcs.getItemDetailLink = (dataRow) => {
+                return`${pagePath}/${dataRow.id}?${queryString}`;
+            };
+
+
         },
     });
     const columns = [
@@ -96,32 +119,36 @@ const DayoffListPage = () => {
         ),
     ];
 
+    const handelSearch = (values) => {
+        const params = new URLSearchParams(location.search);
+        console.log("check values", values);
+        navigate({ search: params.toString() });
+        
+    };
+
     const searchFields = [
         {
-            key: 'startDate',
+            key: 'fromDate',
             placeholder: 'Từ ngày',
-            component: DatePickerField,
-            componentProps: {
-                format: DEFAULT_FORMAT,
-                showTime: true,
-
-            },
+            type: FieldTypes.DATE,
+            format : DATE_FORMAT_DISPLAY,
+            transform: (value) => value ? dayjs(value).format(DATE_FORMAT_DISPLAY) : null,
+            
         },
         {
-            key: 'endDate',
+            key: 'toDate',
             placeholder: 'Tới ngày',
-            component: DatePickerField,
-            componentProps: {
-                format: DEFAULT_FORMAT,
-                showTime: true,
-            },
+            type: FieldTypes.DATE,
+            format : DATE_FORMAT_DISPLAY,
+            transform: (value) => value ? dayjs(value).format(DATE_FORMAT_DISPLAY) : null,
+           
         },
     ];
 
     return (
         <PageWrapper routes={[{ breadcrumbName: 'Lập trình viên', path: routes.DeveloperListPage.path }, { breadcrumbName: 'Đăng ký ngày nghỉ' }]}>
             <ListPage
-                searchForm={mixinFuncs.renderSearchForm({ fields: searchFields, initialValues: queryFilter })}
+                searchForm={mixinFuncs.renderSearchForm({ fields: searchFields, initialValues: queryFilter, onSearch: handelSearch })}
                 actionBar={mixinFuncs.renderActionBar()}
                 baseTable={
                     <BaseTable

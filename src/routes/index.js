@@ -67,18 +67,18 @@ const routes = {
         auth: true,
         title: 'Profile page',
     },
-    listSettingsPage: {
-        path: '/settings',
-        component: SettingListPage,
-        auth: true,
-        title: 'Settings page',
-    },
-    listSettingsPageSavePage: {
-        path: '/settings/:id',
-        component: SettingSavePage,
-        auth: true,
-        title: 'Settings page',
-    },
+    // listSettingsPage: {
+    //     path: '/settings',
+    //     component: SettingListPage,
+    //     auth: true,
+    //     title: 'Settings page',
+    // },
+    // listSettingsPageSavePage: {
+    //     path: '/settings/:id',
+    //     component: SettingSavePage,
+    //     auth: true,
+    //     title: 'Settings page',
+    // },
 
     ...adminsRoutes,
     ...newsRoutes,

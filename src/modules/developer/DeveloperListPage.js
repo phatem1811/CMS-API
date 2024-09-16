@@ -44,30 +44,8 @@ const DeveloperListPage = () => {
                     };
                 }
             };
-            funcs.additionalActionColumnButtons = () => {
-                return {
-                    project: (record) => {
-                       
-                        const { id, name } = record;
-                        return (
-                            <Button
-                                type="link"
-                                style={{ padding: 0 }}
-                                onClick={() => {
-                                    navigate(
-                                        `/developer/project?developerId=${id}&developerName=${encodeURIComponent(name)}`,
-                                    );
-                                }}
-                            >
-                                <BulbOutlined />
-                            </Button>
-                        );
-                    },
-                };
-            };
 
             funcs.additionalActionColumnButtons = () => {
-
                 return {
                     dayOff: (record) => {
                         const { id, accountDto } = record;
@@ -87,9 +65,26 @@ const DeveloperListPage = () => {
                             </Button>
                         );
                     },
+
+                    project: (record) => {
+                       
+                        const { id, name } = record;
+                        return (
+                            <Button
+                                type="link"
+                                style={{ padding: 0 }}
+                                onClick={() => {
+                                    navigate(
+                                        `/developer/project?developerId=${id}&developerName=${encodeURIComponent(name)}`,
+                                    );
+                                }}
+                            >
+                                <BulbOutlined />
+                            </Button>
+                        );
+                    },
                 };
             };
-
         },
         
     });
@@ -210,12 +205,12 @@ const DeveloperListPage = () => {
         mixinFuncs.renderStatusColumn({ width: '90px' }),
         mixinFuncs.renderActionColumn(
             {
-                project : true,
-                dayOff : true, 
+                project : mixinFuncs.hasPermission([apiConfig.project.getList.baseURL]),
+                dayOff : mixinFuncs.hasPermission([apiConfig.dayOff.getList.baseURL]),
                 edit: true,
                 delete: true,
             },
-            { width: '130px', fixed: 'right' },
+            { width: '150px', fixed: 'right' },
         ),
     ];
 
@@ -248,7 +243,6 @@ const DeveloperListPage = () => {
                     />
                 }
             />
-
         </PageWrapper>
     );
 };

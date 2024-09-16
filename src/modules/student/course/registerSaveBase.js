@@ -1,4 +1,3 @@
-
 import PageWrapper from '@components/common/layout/PageWrapper';
 import apiConfig from '@constants/apiConfig';
 import useSaveBase from '@hooks/useSaveBase';
@@ -6,33 +5,36 @@ import React from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import routes from '../route';
 import useTranslate from '@hooks/useTranslate';
-import DayOffForm from './DayoffForm';
-import { useNavigate } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+import ProjectRegistrationForm from './registerForm';
+import { commonMessage } from '@locales/intl';
+
 const message = defineMessages({
-    objectName: 'Ngày nghỉ',
+    objectName: 'dự án',
 });
 
-const DayOffSavePage = () => {
+const ProjectRegistrationSavePage = () => {
     const translate = useTranslate();
-
-    const location = useLocation();
     const queryString = location.search;
-    const params = new URLSearchParams(location.search);
-    const developerId = params.get('developerId');
-    const developerName = params.get('developerName');
-
+    const queryParams = new URLSearchParams(location.search);
+    const currentUrl = new URL(window.location.href);
+    const searchParams = new URLSearchParams(currentUrl.search);
+    const studentId = searchParams.get('studentId') || 'null';
+    const studentName = searchParams.get('studentName') || 'null';
+    const registrationId = searchParams.get('registrationId') || 'null';
+    const courseId = searchParams.get('courseId') || 'null';
+    const courseName = searchParams.get('courseName') || 'null';
+    const courseState = searchParams.get('courseState') || 'null';
+    const courseStatus = searchParams.get('courseStatus') || 'null';
 
     const { detail, mixinFuncs, loading, setIsChangedFormValues, isEditing, title } = useSaveBase({
         apiConfig: {
-            getById: apiConfig.dayOff.getById,
-            create: apiConfig.dayOff.create,
-            update: apiConfig.dayOff.update,
+            getById: apiConfig.registrationProject.getById,
+            create: apiConfig.registrationProject.create,
+            update: apiConfig.registrationProject.update,
         },
         options: {
-            getListUrl: routes.DayoffListPage.path,
+            getListUrl: routes.RegistrationProject.path,
             objectName: translate.formatMessage(message.objectName),
-            initialData: { developerId, developerName },
         },
         override: (funcs) => {
             funcs.prepareUpdateData = (data) => {
@@ -49,22 +51,18 @@ const DayOffSavePage = () => {
         },
     });
     return (
+
         <PageWrapper
-            loading={loading}
+            
             routes={[
-                {
-                    breadcrumbName: <FormattedMessage defaultMessage="Lập trình viên" />,
-                    path: routes.DeveloperListPage.path,
-                },
-                {
-                    breadcrumbName: 'Ngày nghỉ',
-                    path: routes.DayoffListPage.path,
-                },
+                { breadcrumbName: 'Học sinh', path: routes.StudentListPage.path },
+                { breadcrumbName: 'Khóa học', path: `/student/course?studentId=${studentId}&studentName=${studentName}` },
+                { breadcrumbName: 'Đăng kí dự án', path: `/student/registration-project${queryString}` },
                 { breadcrumbName: title },
             ]}
             title={title}
         >
-            <DayOffForm
+            <ProjectRegistrationForm
                 setIsChangedFormValues={setIsChangedFormValues}
                 dataDetail={detail ? detail : {}}
                 formId={mixinFuncs.getFormId()}
@@ -76,4 +74,4 @@ const DayOffSavePage = () => {
     );
 };
 
-export default DayOffSavePage;
+export default ProjectRegistrationSavePage;

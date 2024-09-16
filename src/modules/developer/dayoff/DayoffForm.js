@@ -24,8 +24,17 @@ const DayOffForm = ({ formId, actions, dataDetail, onSubmit, setIsChangedFormVal
         onSubmit,
         setIsChangedFormValues,
     });
+    const [startDate, setStartDate] = useState(null);
 
+    const handleDateChange = (date, dateString) => {
+        setStartDate(date);
+        date = formatDateString(date, DEFAULT_FORMAT);
+
+    };
+    const queryParams = new URLSearchParams(location.search);
+    const idDeveloper= queryParams.get('developerId');
     const handleSubmit = (values) => {
+        if ( idDeveloper) values.developerId = idDeveloper;
         values.startDate = formatDateString(values.startDate, DEFAULT_FORMAT);
         values.endDate = formatDateString(values.endDate, DEFAULT_FORMAT);
         const formvalue = {
@@ -61,6 +70,7 @@ const DayOffForm = ({ formId, actions, dataDetail, onSubmit, setIsChangedFormVal
                             label={<FormattedMessage defaultMessage="Ngày bắt đầu" />}
                             placeholder="Ngày bắt đầu"
                             format={DATE_FORMAT_DISPLAY}
+                            onChange={handleDateChange}
                             style={{ width: '100%' }}
                             required
                         />
@@ -72,6 +82,9 @@ const DayOffForm = ({ formId, actions, dataDetail, onSubmit, setIsChangedFormVal
                             placeholder="Ngày kết thúc"
                             format={DATE_FORMAT_DISPLAY}
                             style={{ width: '100%' }}
+                            disabledDate={(current) => 
+                                startDate ? current && current <= startDate.startOf('day') : false
+                            }
                             required
                         />
                     </Col>

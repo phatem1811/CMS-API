@@ -24,6 +24,7 @@ const StudentListPage = () => {
     const translate = useTranslate();
     const statusValues = translate.formatKeys(statusOptions, ['label']);
     const navigate = useNavigate();
+   
 
     const { data, mixinFuncs, queryFilter, loading, pagination } = useListBase({
         apiConfig: apiConfig.student,
