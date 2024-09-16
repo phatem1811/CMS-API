@@ -135,6 +135,12 @@ export const PROVINCE_KIND = 1;
 export const DISTRICT_KIND = 2;
 export const VILLAGE_KIND = 3;
 
+
+
+export const TASK_KIND_FEATURE = 1;
+export const TASK_KIND_BUG = 2;
+export const TASK_KIND_TESTCASE = 3;
+
 export const SettingTypes = {
     Money: 'Money',
     Timezone: 'Timezone',

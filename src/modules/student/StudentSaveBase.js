@@ -5,26 +5,23 @@ import useFetch from '@hooks/useFetch';
 import useSaveBase from '@hooks/useSaveBase';
 import React, { useEffect } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
+import StudentForm from './StudentForm';
 import routes from './route';
 import useTranslate from '@hooks/useTranslate';
-import { Navigate, useLocation, useNavigate } from 'react-router-dom';
-import SubjectForm from './SubjectForm';
-
 const message = defineMessages({
-    objectName: 'Môn học',
+    objectName: 'Học sinh',
 });
 
-const SubjectSaveBase = () => {
+const StudentSaveBase = () => {
     const translate = useTranslate();
-    const location = useLocation();
     const { detail, mixinFuncs, loading, setIsChangedFormValues, isEditing, title } = useSaveBase({
         apiConfig: {
-            getById: apiConfig.subject.getById,
-            create: apiConfig.subject.create,
-            update: apiConfig.subject.update,
+            getById: apiConfig.student.getById,
+            create: apiConfig.student.create,
+            update: apiConfig.student.update,
         },
         options: {
-            getListUrl: routes.SubjectListPage.path,
+            getListUrl: routes.StudentListPage.path,
             objectName: translate.formatMessage(message.objectName),
         },
         override: (funcs) => {
@@ -34,21 +31,21 @@ const SubjectSaveBase = () => {
                     id: detail.id,
                 };
             };
-
+            
         },
     });
+
     return (
         <PageWrapper
-
+            
             routes={[
-                { breadcrumbName: 'Môn học', path: routes.SubjectListPage.path },
+                { breadcrumbName: <FormattedMessage defaultMessage="Học sinh" />, path: routes.StudentListPage.path },
                 { breadcrumbName: title },
             ]}
             title={title}
         >
-            <SubjectForm
+            <StudentForm
                 setIsChangedFormValues={setIsChangedFormValues}
-
                 dataDetail={detail ? detail : {}}
                 formId={mixinFuncs.getFormId()}
                 isEditing={isEditing}
@@ -59,4 +56,4 @@ const SubjectSaveBase = () => {
     );
 };
 
-export default SubjectSaveBase;
+export default StudentSaveBase;

@@ -47,7 +47,6 @@ const ProjectForm = ({ formId, actions, dataDetail, onSubmit, setIsChangedFormVa
     ];
     const [startDate, setStartDate] = useState(null);
 
-    // Hàm xử lý khi thay đổi ngày
     const handleDateChange = (date, dateString) => {
         setStartDate(date);
         date = formatDateString(date, DEFAULT_FORMAT);

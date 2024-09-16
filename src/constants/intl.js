@@ -23,3 +23,4 @@ export const actionMessage = defineMessages({
     contactForm: 'Biểu mẫu liên hệ',
     navigation: 'Chuyển hướng',
 });
+

@@ -15,7 +15,9 @@ import settingsRoutes from '@modules/settings/routes';
 import coursesRoutes from '@modules/Cources/route';
 import projectRoutes from '@modules/project/route';
 import subjectRoutes from '@modules/subject/route';
-
+import studentRoutes from '@modules/student/route';
+import developerRoutes from '@modules/developer/route';
+import StoryTaskRoutes from '@modules/project/detail/tabStory/route';
 /*
     auth
         + null: access login and not login
@@ -85,6 +87,9 @@ const routes = {
     ...coursesRoutes,
     ...projectRoutes,
     ...subjectRoutes,
+    ...StoryTaskRoutes,
+    ...studentRoutes,
+    ...developerRoutes,
 
     // keep this at last
     notFound: {
