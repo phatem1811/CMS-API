@@ -135,7 +135,10 @@ export const PROVINCE_KIND = 1;
 export const DISTRICT_KIND = 2;
 export const VILLAGE_KIND = 3;
 
-
+export const REGISTRATION_STATE_REGISTER = 1;
+export const REGISTRATION_STATE_LEARNING = 2;
+export const REGISTRATION_STATE_FINISHED = 3;
+export const REGISTRATION_STATE_CANCEL = 4;
 
 export const TASK_KIND_FEATURE = 1;
 export const TASK_KIND_BUG = 2;

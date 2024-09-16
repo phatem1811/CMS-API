@@ -33,6 +33,7 @@ const messages = defineMessages({
     revenue: 'Lợi nhuận chia sẻ',
     setting: 'setting',
     updateSuccess: 'Cập nhật {objectName} thành công',
+    content: 'Nội dung',
 });
 const GeneralSettingPage = ({ groupName }) => {
     const translate = useTranslate();

@@ -6,14 +6,12 @@ import { defineMessages } from 'react-intl';
 import GeneralSettingPage from './GeneralSetting';
 import { settingGroups } from '@constants/masterData';
 import routes from '@routes';
-
 const message = defineMessages({
     generalSetting: 'Cài đặt chung',
     pageSetting: 'Cài đặt trang',
     generalRevenue: 'Lợi nhuận chia sẻ',
     trainingConfig: 'Cấu hình đào tạo',
 });
-
 const SettingPage = () => {
     const translate = useTranslate();
     const [activeTab, setActiveTab] = useState(
@@ -35,22 +33,30 @@ const SettingPage = () => {
                         {
                             key: settingGroups.GENERAL,
                             label: translate.formatMessage(message.generalSetting),
-                            children: activeTab == settingGroups.GENERAL && <GeneralSettingPage groupName={settingGroups.GENERAL} />,
+                            children: activeTab == settingGroups.GENERAL && (
+                                <GeneralSettingPage groupName={settingGroups.GENERAL} />
+                            ),
                         },
                         {
                             key: settingGroups.PAGE,
                             label: translate.formatMessage(message.pageSetting),
-                            children: activeTab == settingGroups.PAGE && <GeneralSettingPage groupName={settingGroups.PAGE} />,
+                            children: activeTab == settingGroups.PAGE && (
+                                <GeneralSettingPage groupName={settingGroups.PAGE} />
+                            ),
                         },
                         {
                             key: settingGroups.REVENUE,
                             label: translate.formatMessage(message.generalRevenue),
-                            children: activeTab == settingGroups.REVENUE &&  <GeneralSettingPage groupName={settingGroups.REVENUE} />,
+                            children: activeTab == settingGroups.REVENUE && (
+                                <GeneralSettingPage groupName={settingGroups.REVENUE} />
+                            ),
                         },
                         {
                             key: settingGroups.TRAINING,
                             label: translate.formatMessage(message.trainingConfig),
-                            children: activeTab == settingGroups.TRAINING &&  <GeneralSettingPage groupName={settingGroups.TRAINING} />,
+                            children: activeTab == settingGroups.TRAINING && (
+                                <GeneralSettingPage groupName={settingGroups.TRAINING} />
+                            ),
                         },
                     ]}
                 />
